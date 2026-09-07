@@ -1,0 +1,11 @@
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+__pycache__/
+*.pyc
+.cache/
+dist/
+ci/test_app/components/
+ci/test_app/sdkconfig.bmgr*

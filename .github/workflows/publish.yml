@@ -1,0 +1,56 @@
+name: Publish board pack
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate the upload without creating a registry version
+        type: boolean
+        default: true
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: board-pack-publish
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+
+  upload:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: component-registry
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install component tooling
+        run: python -m pip install PyYAML==6.0.3 idf-component-manager==2.5.0
+      - name: Check release reference
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          python ci/scripts/check_release.py
+      - name: Upload to waveshare namespace
+        env:
+          IDF_COMPONENT_API_TOKEN: ${{ secrets.IDF_COMPONENT_API_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$IDF_COMPONENT_API_TOKEN" ]]; then
+            echo 'Set IDF_COMPONENT_API_TOKEN in the component-registry environment or repository Actions secrets.'
+            exit 1
+          fi
+          options=()
+          if [[ "$DRY_RUN" == true ]]; then
+            options+=(--dry-run)
+          fi
+          compote component upload --namespace waveshare --name waveshare-boards "${options[@]}"

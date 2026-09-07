@@ -1,0 +1,69 @@
+peripherals:
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 0
+      pins:
+        sda: 8
+        scl: 9
+      enable_internal_pullup: true
+      glitch_count: 7
+
+  - name: uart_rs485
+    type: uart
+    config:
+      uart_num: 1
+      rx_buffer_size: 2048
+      tx_buffer_size: 0
+      tx_io_num: 15
+      rx_io_num: 16
+      rts_io_num: -1
+      cts_io_num: -1
+      uart_mode: UART_MODE_UART
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+        source_clk: UART_SCLK_DEFAULT
+
+  - name: uart_external
+    type: uart
+    config:
+      uart_num: 2
+      rx_buffer_size: 2048
+      tx_buffer_size: 0
+      tx_io_num: 43
+      rx_io_num: 44
+      rts_io_num: -1
+      cts_io_num: -1
+      uart_mode: UART_MODE_UART
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+        source_clk: UART_SCLK_DEFAULT
+
+  - name: adc_sensor
+    type: adc
+    role: oneshot
+    config:
+      unit_id: ADC_UNIT_1
+      channel_id: 5
+      atten: ADC_ATTEN_DB_12
+      bit_width: ADC_BITWIDTH_12
+
+  - name: spi_sd
+    type: spi
+    role: master
+    config:
+      spi_bus_config:
+        spi_port: SPI2_HOST
+        mosi_io_num: 11
+        miso_io_num: 13
+        sclk_io_num: 12
+        max_transfer_sz: 4096

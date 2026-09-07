@@ -1,0 +1,27 @@
+name: Bug report / 问题反馈
+description: Report a board definition, generation, or build problem / 反馈板卡定义、生成或编译问题
+title: '[Bug] '
+body:
+  - type: input
+    id: board
+    attributes:
+      label: Board and hardware revision / 板卡与硬件版本
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: ESP-IDF, Board Manager, and board pack versions / 软件版本
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps, expected result, and actual result / 复现步骤、预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs and hardware reference / 相关日志与硬件参考
+      description: Remove credentials and personal/device identifiers. / 请删除凭据和个人、设备标识。

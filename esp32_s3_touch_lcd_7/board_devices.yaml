@@ -1,0 +1,80 @@
+devices:
+  - name: display_lcd
+    chip: generic_rgb
+    type: display_lcd
+    version: 1.0.0
+    sub_type: rgb
+    config:
+      swap_xy: false
+      mirror_y: false
+      mirror_x: false
+      invert_color: false
+      need_reset: false
+      bits_per_pixel: 16
+      rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+      data_endian: LCD_RGB_DATA_ENDIAN_BIG
+      rgb_panel_config:
+        clk_src: LCD_CLK_SRC_DEFAULT
+        data_width: 16
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 3
+        bounce_buffer_size_px: 8000
+        dma_burst_size: 64
+        hsync_gpio_num: 46
+        vsync_gpio_num: 3
+        de_gpio_num: 5
+        pclk_gpio_num: 7
+        disp_gpio_num: -1
+        data_gpio_nums: [14, 38, 18, 17, 10, 39, 0, 45, 48, 47, 21, 1, 2, 42, 41, 40]
+        timings:
+          pclk_hz: 16000000
+          h_res: 800
+          v_res: 480
+          hsync_pulse_width: 4
+          hsync_back_porch: 8
+          hsync_front_porch: 8
+          vsync_pulse_width: 4
+          vsync_back_porch: 8
+          vsync_front_porch: 8
+          flags:
+            pclk_active_neg: true
+        flags:
+          disp_active_low: false
+          refresh_on_demand: false
+          fb_in_psram: true
+          double_fb: false
+          no_fb: false
+
+  - name: lcd_touch
+    chip: gt911
+    type: lcd_touch
+    sub_type: i2c
+    version: 1.0.0
+    dependencies:
+      espressif/esp_lcd_touch_gt911: "1.2.1"
+    config:
+      io_i2c_config:
+        control_phase_bytes: 1
+        dc_bit_offset: 0
+        lcd_cmd_bits: 16
+        lcd_param_bits: 0
+        scl_speed_hz: 400000
+        flags:
+          dc_low_on_data: false
+          disable_control_phase: true
+      touch_config:
+        x_max: 800
+        y_max: 480
+        rst_gpio_num: -1
+        int_gpio_num: 4
+        levels:
+          reset: 0
+          interrupt: 0
+        flags:
+          swap_xy: false
+          mirror_x: false
+          mirror_y: false
+    peripherals:
+      - i2c_name: i2c_master
+        i2c_addr: [0xba, 0x28]

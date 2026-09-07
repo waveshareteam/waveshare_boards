@@ -1,0 +1,109 @@
+name: Board pack CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+
+defaults:
+  run:
+    working-directory: waveshare-boards
+
+jobs:
+  validate:
+    name: Metadata and routing
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.scope.outputs.matrix }}
+      has_builds: ${{ steps.scope.outputs.has_builds }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: waveshare-boards
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install validation tools
+        run: python -m pip install PyYAML==6.0.3 idf-component-manager==2.5.0
+      - name: Test CI helpers
+        run: python -m unittest discover -s ci/scripts -p 'test_*.py' -v
+      - name: Check board definitions and documentation navigation
+        run: |
+          python ci/scripts/board_pack.py check
+          python scripts/update_supported_boards_table.py --check
+          python ci/scripts/check_docs.py
+      - id: scope
+        name: Select affected boards
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "pull_request" || "$EVENT_NAME" == "push" ]]; then
+            python ci/scripts/board_pack.py matrix --base "$BASE_SHA"
+          else
+            python ci/scripts/board_pack.py matrix --all
+          fi
+      - name: Validate component package without credentials
+        run: compote component pack --name waveshare-boards
+
+  build:
+    name: ${{ matrix.board }} / ${{ matrix.idf }} / BMGR ${{ matrix.bmgr }}
+    needs: validate
+    if: needs.validate.outputs.has_builds == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.validate.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: waveshare-boards
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Generate and compile board definitions
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: ${{ matrix.idf }}
+          target: ${{ matrix.target }}
+          path: waveshare-boards/ci/test_app
+          command: |
+            set -eu
+            python -m pip install '${{ matrix.component_manager }}' '${{ matrix.bmgr_assist }}'
+            python ../scripts/board_pack.py pin '${{ matrix.bmgr }}'
+            idf.py bmgr -l -c ../..
+            idf.py bmgr -b '${{ matrix.board }}' -c ../..
+            idf.py build
+
+  result:
+    name: Board pack checks
+    defaults:
+      run:
+        working-directory: .
+    if: always()
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all selected builds
+        env:
+          VALIDATION: ${{ needs.validate.result }}
+          BUILD: ${{ needs.build.result }}
+          HAS_BUILDS: ${{ needs.validate.outputs.has_builds }}
+        run: |
+          test "$VALIDATION" = success
+          if [ "$HAS_BUILDS" = true ]; then
+            test "$BUILD" = success
+          else
+            test "$BUILD" = skipped
+          fi
