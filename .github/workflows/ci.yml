@@ -70,7 +70,7 @@ jobs:
         run: compote component pack --name waveshare_boards
 
   build:
-    name: ${{ matrix.board }} / ${{ matrix.idf }} / BMGR ${{ matrix.bmgr }} / ${{ matrix.integration }}
+    name: ${{ matrix.board }} / ${{ matrix.idf }} / BMGR ${{ matrix.bmgr }}
     needs: validate
     if: needs.validate.outputs.has_builds == 'true'
     runs-on: ubuntu-latest
@@ -92,7 +92,6 @@ jobs:
             set -eu
             python -m pip install '${{ matrix.component_manager }}' '${{ matrix.bmgr_assist }}'
             python ../scripts/board_pack.py pin '${{ matrix.bmgr }}'
-            python ../scripts/board_pack.py integration '${{ matrix.integration }}'
             idf.py bmgr -l
             idf.py bmgr -b '${{ matrix.board }}'
             idf.py build

@@ -44,8 +44,8 @@ CI validates generation and compilation; physical operation requires board testi
 
 ## 🚀 Quick start
 
-Activate ESP-IDF first. Until a registry version is published, clone this pack
-into an **existing ESP-IDF application's** component directory:
+Activate ESP-IDF first. For a local checkout, clone this pack into an
+**existing ESP-IDF application's** component directory:
 
 ```bash
 mkdir -p components
@@ -69,8 +69,7 @@ the component name. The pack declares `espressif/esp_board_manager` as a public
 dependency. Applications can include `esp_board_manager.h` and initialize the
 selected board using `esp_board_manager_init()`.
 
-After maintainers publish the component, install it from the registry instead
-of keeping the local clone:
+Published versions can be installed from the registry:
 
 ```bash
 idf.py add-dependency "waveshare/waveshare_boards"
@@ -78,15 +77,14 @@ idf.py reconfigure
 idf.py bmgr -l
 ```
 
-The intended registry identity is `waveshare/waveshare_boards`; a repository version
-or a passing packaging check does not by itself mean that version is published.
+Find available versions in the
+[Component Registry](https://components.espressif.com/components/waveshare/waveshare_boards).
 
 ## 🗂️ Repository layout
 
 ```text
 boards/<full_model>/   Board metadata, peripherals, devices, and setup code
 include/               Framework-independent AMOLED brightness helper
-integrations/          Optional framework adapters, shared across boards
 idf_component.yml      Component metadata and managed dependencies
 CMakeLists.txt         Board-pack component registration
 ci/test_app/           Board Manager integration compile test
@@ -116,7 +114,7 @@ unique `board` value. The catalog is regenerated from the definitions.
 ## 📚 Documentation
 
 - [Board organization, hardware revisions, and migration](docs/BOARDS.md)
-- [AMOLED brightness and optional Brookesia integration](docs/INTEGRATIONS.md)
+- [AMOLED brightness control](docs/INTEGRATIONS.md)
 - [CI coverage and local validation](docs/CI.md)
 - [Registry credentials and publication](docs/PUBLISHING.md)
 - [Contributing](CONTRIBUTING.md)
