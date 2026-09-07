@@ -97,7 +97,7 @@ Board Manager-selected I2C address and delegates to the managed driver.
 
 Successful compilation proves API and generated-code compatibility, not wiring,
 PSRAM provisioning, touch reset sequencing, or physical operation. Official schematic links and the AMOLED migration checks are recorded in
-[board notes](BOARDS.md). Physical operation and the full Brookesia application
+[board notes](BOARDS.md). Physical operation and application-level integration
 remain separate validation steps.
 
 Primary references: [IDF v5.5.5](https://github.com/espressif/esp-idf/releases/tag/v5.5.5),

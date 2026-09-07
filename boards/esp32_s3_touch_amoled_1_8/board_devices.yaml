@@ -6,8 +6,6 @@ devices:
     version: default
     dependencies:
       espressif/esp_io_expander_tca9554: "^2"
-      brookesia_hal_custom:
-        override_path: "${BOARD_PATH}/components/brookesia_hal_custom"
     config:
       max_pins: 8                      # Maximum number of GPIO pins supported
       output_io_mask: [0, 1, 2, 7]        # List of pins configured as output

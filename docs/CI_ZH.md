@@ -83,7 +83,7 @@ GT911 驱动继续使用板卡原有的托管依赖 **1.2.1** 约束；更换版
 
 编译成功证明 API 和生成代码兼容，不证明接线、PSRAM 配置、触摸复位时序或实机运行正确。
 官方原理图链接与 AMOLED 迁移核对内容见[板卡说明](BOARDS_ZH.md)。
-实机运行和完整 Brookesia 应用需要分别验证。
+实机运行和应用层集成需要分别验证。
 
 主要资料：[IDF v5.5.5](https://github.com/espressif/esp-idf/releases/tag/v5.5.5)、
 [IDF v6.1](https://github.com/espressif/esp-idf/releases/tag/v6.1)、
