@@ -1,6 +1,8 @@
 name: Publish board pack
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -16,14 +18,50 @@ concurrency:
   group: board-pack-publish
   cancel-in-progress: false
 
+env:
+  DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      publish: ${{ steps.plan.outputs.result }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PyYAML==6.0.3
+      - id: version
+        name: Check release source and manifest
+        run: python ci/scripts/check_release.py
+      - id: plan
+        name: Skip versions with a completed release
+        uses: actions/github-script@v7
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        with:
+          script: |
+            const release = require('./ci/scripts/github_release.cjs');
+            return release.shouldPublish({github, context, core}, process.env.RELEASE_TAG, process.env.DRY_RUN === 'true');
+
   validate:
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true'
     uses: ./.github/workflows/ci.yml
+    with:
+      full_validation: true
 
   upload:
-    needs: validate
+    needs: [prepare, validate]
     runs-on: ubuntu-latest
     environment: component-registry
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,24 +71,56 @@ jobs:
           python-version: '3.12'
       - name: Install component tooling
         run: python -m pip install PyYAML==6.0.3 idf-component-manager==2.5.0
-      - name: Check release reference
+      - name: Check release source and credentials
         env:
-          DRY_RUN: ${{ inputs.dry_run }}
+          IDF_COMPONENT_API_TOKEN: ${{ secrets.IDF_COMPONENT_API_TOKEN }}
         run: |
           python ci/scripts/check_release.py
+          test -n "$IDF_COMPONENT_API_TOKEN" || { echo 'Set IDF_COMPONENT_API_TOKEN in Actions secrets.'; exit 1; }
+      - name: Create or verify immutable version tag
+        if: env.DRY_RUN == 'false'
+        uses: actions/github-script@v7
+        env:
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+        with:
+          script: |
+            const release = require('./ci/scripts/github_release.cjs');
+            await release.ensureTag({github, context}, process.env.RELEASE_TAG);
       - name: Upload to waveshare namespace
         env:
           IDF_COMPONENT_API_TOKEN: ${{ secrets.IDF_COMPONENT_API_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "$IDF_COMPONENT_API_TOKEN" ]]; then
-            echo 'Set IDF_COMPONENT_API_TOKEN in the component-registry environment or repository Actions secrets.'
-            exit 1
-          fi
           options=()
           if [[ "$DRY_RUN" == true ]]; then
             options+=(--dry-run)
           fi
-          compote component upload --namespace waveshare --name waveshare_boards "${options[@]}"
+          compote component upload --namespace waveshare --name waveshare_boards --commit-sha "$GITHUB_SHA" "${options[@]}"
+
+  release:
+    needs: [prepare, upload]
+    if: ${{ success() && (github.event_name == 'push' || !inputs.dry_run) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish GitHub Release after registry upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > release-notes.md <<EOF
+          Install: \`idf.py add-dependency "waveshare/waveshare_boards==$VERSION"\`
+
+          [ESP Component Registry](https://components.espressif.com/components/waveshare/waveshare_boards/versions/$VERSION/readme)
+          · [English documentation](https://github.com/$GH_REPO/blob/$RELEASE_TAG/README.md)
+          · [简体中文文档](https://github.com/$GH_REPO/blob/$RELEASE_TAG/README_ZH.md)
+
+          The complete board build matrix passed before this upload. Hardware behavior still requires testing on the physical board.
+          EOF
+          gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" --notes-file release-notes.md --generate-notes
