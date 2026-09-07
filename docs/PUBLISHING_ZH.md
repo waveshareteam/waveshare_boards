@@ -4,13 +4,13 @@
 
 ## 组件名称
 
-GitHub 仓库为 `waveshareteam/waveshare-boards`，在线组件库名称为 **`waveshare/waveshare-boards`**，
+GitHub 仓库为 `waveshareteam/waveshare_boards`，在线组件库名称为 **`waveshare/waveshare_boards`**，
 沿用[微雪组件上传工作流](https://github.com/waveshareteam/Waveshare-ESP32-components/blob/master/.github/workflows/upload_component.yml)
 使用的命名空间。清单中保留 `esp_board_manager`、`board_manager` 和 `boards` 标签，
 便于 Board Manager 发现组件包。
 
 提交 PR、合并或普通 CI 都不会发布组件库版本。
-`compote component pack --name waveshare-boards` 可以在无令牌情况下验证本地打包，
+`compote component pack --name waveshare_boards` 可以在无令牌情况下验证本地打包，
 生成的归档存放在已忽略的 `dist/` 目录。
 
 ## 一次性配置凭据
@@ -44,7 +44,7 @@ GitHub 自动提供的 `GITHUB_TOKEN` 不能替代组件库令牌。
 2. 在审核通过的提交上创建 `v<version>` 标签，例如 `v0.1.0`。
 3. 从该标签运行 **Publish board pack**，取消勾选 **dry_run**。
    工作流检查标签与清单版本一致且提交属于 `main`，重新编译全部板卡，
-   再上传 `waveshare/waveshare-boards`。
+   再上传 `waveshare/waveshare_boards`。
 4. 检查组件库版本页面，并在全新应用中验证安装。
 
 已发布版本不可覆盖。重复版本会失败，不会把不同源码静默视为成功。

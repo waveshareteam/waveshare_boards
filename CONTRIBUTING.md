@@ -6,7 +6,10 @@ Submit board definitions, fixes, or documentation through a pull request.
 
 1. Keep each board's `board_info.yaml`, `board_peripherals.yaml`,
    `board_devices.yaml`, and optional setup source together. Names must be unique
-   and match the directory; nesting is limited to three levels.
+   and match the directory. Use `boards/<full_model>/`; keep the chip prefix
+   and add a hardware revision suffix only when separate definitions are needed.
+   Do not add another chip/category directory: local component discovery has a
+   lower effective depth limit. See [board organization](docs/BOARDS.md).
 2. Base hardware changes on the matching product revision's schematic or official
    hardware reference. Include the source link or permitted reference file and
    explain what was checked. Report hardware testing separately from compilation.

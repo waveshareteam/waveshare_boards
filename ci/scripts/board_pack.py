@@ -33,8 +33,10 @@ def discover(root):
         relative = path.parent.relative_to(root)
         if any(p.startswith(".") or p in EXCLUDED for p in relative.parts):
             continue
-        if not 1 <= len(relative.parts) <= 3:
-            raise ValueError(f"board exceeds the supported three-level depth: {relative}")
+        # Local components scanning starts above the pack directory. Reserve
+        # that level so override, managed, and local installs all work.
+        if not 1 <= len(relative.parts) <= 2:
+            raise ValueError(f"board exceeds the supported two-level depth: {relative}")
         info = load_yaml(path)
         name, chip = info.get("board", ""), info.get("chip", "")
         if not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", name):
