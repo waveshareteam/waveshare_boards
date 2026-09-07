@@ -34,7 +34,7 @@
     {
       "category": "embedded_upstream",
       "patterns": [
-        "boards/*/components/brookesia_hal_custom/CHANGELOG.md"
+        "integrations/brookesia_hal_custom/CHANGELOG.md"
       ]
     }
   ]

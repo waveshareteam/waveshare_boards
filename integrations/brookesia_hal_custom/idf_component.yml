@@ -1,0 +1,13 @@
+version: "0.1.1"
+description: Optional AMOLED brightness integration for Brookesia HAL interfaces
+license: Apache-2.0
+dependencies:
+  # Brookesia 0.8 lib_utils requires ESP-IDF 6.0 through 6.2.
+  idf: ">=6.0,<=6.2"
+  # Keep the interface ABI aligned with the imported Brookesia source.
+  espressif/brookesia_hal_interface:
+    version: "0.8.*"
+    require: public
+  espressif/esp_board_manager:
+    version: ">=0.7.2"
+    require: public

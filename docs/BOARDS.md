@@ -41,22 +41,25 @@ expander drivers remain registry dependencies.
 The migration makes these changes to the imported profiles:
 
 - Include `dev_custom.h` explicitly for custom-device registration on Board Manager 0.7.2.
-- Separate hardware defaults from the Brookesia application settings. The original
-  profile is retained at `components/brookesia_hal_custom/sdkconfig.defaults`
-  inside each board, while `sdkconfig.defaults.board` no longer enables an entire
-  application or requires its `partitions_16m.csv`.
-- Compile the optional Brookesia display bridge only when the application enables
-  `CONFIG_BROOKESIA_HAL_ADAPTOR_ENABLE_DISPLAY_DEVICE`. A plain Board Manager
-  application does not need the HAL adaptor. A Brookesia application must supply
-  that dependency and choose compatible application defaults and partitions;
-  the retained profile is reference input, not a standalone application.
+- Extract the unchanged QSPI brightness command into the public
+  `waveshare_amoled_set_brightness()` helper. Both ordinary applications and the
+  optional framework adapter can use it without duplicating the hardware command.
+- Keep only hardware defaults in `sdkconfig.defaults.board`. Applications choose
+  their own feature settings and partition layout.
+- Consolidate the three Brookesia brightness plugins into one optional component
+  under `integrations/brookesia_hal_custom/`, with the original three application
+  profiles under its `profiles/` directory. Board YAML no longer selects a
+  framework plugin automatically. See [explicit integration](INTEGRATIONS.md).
 - Disable automatic SD formatting after mount failure on the 1.8 and 2.16 boards.
   Mount failure is reported without erasing an existing card.
 - Remove duplicate YAML keys with identical values and correct stale pin comments.
 
-The imported PMU rail and charging initialization remains unchanged. The optional
-Brookesia bridge and application profile preserve integration source, but the
-full Brookesia application is not part of this repository's build matrix.
+The imported PMU rail and charging initialization remains unchanged. Display,
+touch, audio, SD, peripheral configuration, and panel initialization are retained
+in each board directory. The shared integration keeps the brightness methods,
+plugin/interface names, display group, mutex, command format, and default values.
+The AXP2101 implementation remains board-local because the 1.8 setup also uses
+its GPIO expander; merging those paths is a separate hardware change.
 
 ## Hardware reference checks
 
@@ -112,7 +115,7 @@ physical display/touch test after implementation.
 
 Brookesia's board package carries Apache-2.0; individual imported files retain
 SPDX notices, including CC0-1.0 on setup code. Preserve the original copyright
-headers. The upstream bridge changelog remains upstream-owned and untranslated.
+headers. The imported integration changelog remains upstream-owned and unchanged.
 Managed drivers retain their respective licenses; this pack does not relicense
 them. See [the upstream package license](https://github.com/espressif/esp-brookesia/blob/6a087b6d76e989802b72fdb835928b273af76af8/hal/brookesia_hal_boards/license.txt)
 and [CC0-1.0 terms](https://creativecommons.org/publicdomain/zero/1.0/legalcode.en).
