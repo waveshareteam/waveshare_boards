@@ -43,19 +43,20 @@ The migration makes these changes to the imported profiles:
 - Include `dev_custom.h` explicitly for custom-device registration on Board Manager 0.7.2.
 - Keep only hardware defaults in `sdkconfig.defaults.board`. Applications choose
   their own feature settings and partition layout.
-- Omit the upstream `brookesia_hal_custom` component and its YAML dependency.
-  It registers a Brookesia `BacklightIface` plugin for AMOLED brightness control;
-  it is not needed for Board Manager discovery or the display, touch, audio,
-  storage, and PMU device definitions.
+- Consolidate the three Brookesia brightness plugins into one optional component
+  under `integrations/brookesia_hal_custom/`, with the original three application
+  profiles under its `profiles/` directory. Board YAML no longer selects a
+  framework plugin automatically. See [explicit integration](INTEGRATIONS.md).
 - Disable automatic SD formatting after mount failure on the 1.8 and 2.16 boards.
   Mount failure is reported without erasing an existing card.
 - Remove duplicate YAML keys with identical values and correct stale pin comments.
 
-The imported PMU rail and charging initialization remains unchanged. Each panel's
-setup code already sets its initial brightness through the display controller.
-Runtime brightness control belongs to the consuming application. A Brookesia
-application using `BacklightIface` must supply its framework adapter there;
-this board pack does not export that plugin or depend on Brookesia HAL.
+The imported PMU rail and charging initialization remains unchanged. Display,
+touch, audio, SD, peripheral configuration, and panel initialization are retained
+in each board directory. The shared integration keeps the brightness methods,
+plugin/interface names, display group, mutex, command format, and default values.
+The AXP2101 implementation remains board-local because the 1.8 setup also uses
+its GPIO expander; merging those paths is a separate hardware change.
 
 ## Hardware reference checks
 
@@ -111,6 +112,7 @@ physical display/touch test after implementation.
 
 Brookesia's board package carries Apache-2.0; individual imported files retain
 SPDX notices, including CC0-1.0 on setup code. Preserve the original copyright
-headers. Managed drivers retain their respective licenses; this pack does not relicense
+headers. The imported integration changelog remains upstream-owned and unchanged.
+Managed drivers retain their respective licenses; this pack does not relicense
 them. See [the upstream package license](https://github.com/espressif/esp-brookesia/blob/6a087b6d76e989802b72fdb835928b273af76af8/hal/brookesia_hal_boards/license.txt)
 and [CC0-1.0 terms](https://creativecommons.org/publicdomain/zero/1.0/legalcode.en).

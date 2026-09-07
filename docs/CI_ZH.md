@@ -13,7 +13,8 @@
 相同版本合并。组件库查询失败会使任务失败，每个矩阵项均记录明确版本。
 
 Board Manager 初始最低版本为 **0.7.2**，与参考板卡包模板一致。
-当前最低版与最新版相同，因此四块板卡在两个 IDF 版本线上共八次编译。
+当前最低版与最新版相同，普通板卡模式在两个 IDF 版本线上共八项编译，
+另加三个 AMOLED 型号在 IDF 6.1 下的可选 Brookesia 适配测试，总计十一项。
 调整最低版本前需要明确兼容性变更并测试。
 不支持的芯片能力配置或生成失败会使 CI 失败，不会被计为编译成功。
 
@@ -27,6 +28,11 @@ Board Manager 0.7.2 可在托管安装、`components/` 本地克隆和清单 `ov
 组件包内采用 `boards/<完整型号>/`：本地扫描从应用的 `components/` 根目录开始，
 再增加一层芯片目录会超过其三层搜索限制。详见[目录与源码依据](BOARDS_ZH.md)。
 
+可选适配使用 HAL interface / lib_utils 0.8.2。上游 lib_utils 0.8 要求 IDF 6.0–6.2，
+因此 `ci/versions.json` 通过 `brookesia_idf` 声明其原生支持的测试版本线。
+普通板卡模式仍覆盖两个版本线，三个保留的应用配置标识需要额外适配测试的板卡。
+独立适配编译不会套用完整应用配置。详见[集成覆盖与上游约束](INTEGRATIONS_ZH.md)。
+
 ## 变更路由
 
 每个 PR 都运行轻量的元数据、单元测试、导航和打包检查。
@@ -37,7 +43,7 @@ Board Manager 0.7.2 可在托管安装、`components/` 本地克隆和清单 `ov
 | 根目录或嵌套 Markdown、文档图片 | 不编译 |
 | Issue 表单、许可证、忽略规则 | 不编译 |
 | 单个板卡目录内的文件 | 对应板卡 |
-| CI 脚本、测试、工作流、根清单或 CMake | 全部板卡 |
+| CI 脚本、测试、工作流、集成组件、根清单或 CMake | 全部板卡 |
 | 删除或重命名板卡路径 | 同时考虑新旧路径；已移除路径可能选择全部剩余板卡 |
 | 固件文档、源码、二进制、归档 | 单独报告，不触发板卡编译 |
 | 未识别的非文档输入 | 全部板卡，并报告路径供检查 |
@@ -64,6 +70,7 @@ python scripts/update_supported_boards_table.py --check
 python ci/scripts/check_docs.py
 python ci/scripts/board_pack.py matrix --all
 python ci/scripts/board_pack.py pin 0.7.2
+python ci/scripts/board_pack.py integration none
 idf.py -C ci/test_app bmgr -l
 idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7
 idf.py -C ci/test_app build

@@ -29,5 +29,13 @@
         "license"
       ]
     }
+  ],
+  "classification_rules": [
+    {
+      "category": "embedded_upstream",
+      "patterns": [
+        "integrations/brookesia_hal_custom/CHANGELOG.md"
+      ]
+    }
   ]
 }

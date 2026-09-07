@@ -16,7 +16,8 @@ Registry lookup failures fail the job. Each matrix entry records an exact versio
 
 The initial Board Manager floor is **0.7.2**, matching the reference board-pack
 template. The current floor and latest resolve to the same version, giving eight
-builds for four boards across the two IDF lines. Keep the floor until a deliberate compatibility change
+plain board builds across the two IDF lines plus three optional Brookesia adapter
+builds on IDF 6.1, eleven builds in total. Keep the floor until a deliberate compatibility change
 is tested. Unsupported catalog profiles or generation failures fail CI; they are
 not counted as successful builds.
 
@@ -34,6 +35,13 @@ Use `boards/<full_model>/` inside the pack: local scanning begins at the
 application's `components/` root, so adding another chip directory exceeds its
 three-level search limit. See [layout and source evidence](BOARDS.md).
 
+The optional adapter uses HAL interface/lib_utils 0.8.2. Upstream lib_utils 0.8
+requires IDF 6.0–6.2, so `ci/versions.json` declares its native IDF test line in
+`brookesia_idf`. The ordinary board builds still cover both lines. The three
+preserved application profiles identify the boards with this additional test;
+full application profiles are not applied by the standalone adapter compile test.
+See [integration coverage and upstream constraints](INTEGRATIONS.md).
+
 ## Change routing
 
 The lightweight metadata, unit-test, navigation, and packaging checks run on every
@@ -44,7 +52,7 @@ PR. `Board pack checks` is the stable aggregate status suitable for branch prote
 | Root or nested Markdown, documentation images | None |
 | Issue forms, license, ignore rules | None |
 | Files inside one board directory | That board |
-| CI scripts, tests, workflows, root manifest or CMake | All boards |
+| CI scripts, tests, workflows, integrations, root manifest or CMake | All boards |
 | Deleted or renamed board paths | Both sides are considered; removed paths can select all remaining boards |
 | Firmware documentation, source, binary, archive | Reported separately; no board build |
 | Unrecognized non-documentation input | All boards; path reported for review |
@@ -74,6 +82,7 @@ python scripts/update_supported_boards_table.py --check
 python ci/scripts/check_docs.py
 python ci/scripts/board_pack.py matrix --all
 python ci/scripts/board_pack.py pin 0.7.2
+python ci/scripts/board_pack.py integration none
 idf.py -C ci/test_app bmgr -l
 idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7
 idf.py -C ci/test_app build

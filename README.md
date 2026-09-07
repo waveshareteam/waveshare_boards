@@ -85,6 +85,7 @@ or a passing packaging check does not by itself mean that version is published.
 
 ```text
 boards/<full_model>/   Board metadata, peripherals, devices, and setup code
+integrations/          Optional framework adapters, shared across boards
 idf_component.yml      Component metadata and managed dependencies
 CMakeLists.txt         Board-pack component registration
 ci/test_app/           Board Manager integration compile test
@@ -114,6 +115,7 @@ unique `board` value. The catalog is regenerated from the definitions.
 ## 📚 Documentation
 
 - [Board organization, hardware revisions, and migration](docs/BOARDS.md)
+- [Optional Brookesia brightness integration](docs/INTEGRATIONS.md)
 - [CI coverage and local validation](docs/CI.md)
 - [Registry credentials and publication](docs/PUBLISHING.md)
 - [Contributing](CONTRIBUTING.md)

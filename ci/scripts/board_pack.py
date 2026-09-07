@@ -15,7 +15,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 EXCLUDED = {"ci", "scripts", "docs", "firmware", "examples", "build",
-            "managed_components", "components", "third_party", "libraries", "dist"}
+            "managed_components", "components", "third_party", "libraries", "dist", "integrations"}
 STABLE = re.compile(r"\d+\.\d+\.\d+(?:~\d+)?")
 
 
@@ -94,7 +94,7 @@ def route(boards, paths):
             selected.update(direct)
         else:
             selected.update(b["board"] for b in boards)
-            if not (value.startswith(("ci/", "scripts/", ".github/workflows/"))
+            if not (value.startswith(("ci/", "scripts/", ".github/workflows/", "integrations/"))
                     or value in {"CMakeLists.txt", "idf_component.yml"}):
                 unknown.append(value)
     return {"boards": [b for b in boards if b["board"] in selected],
@@ -113,10 +113,40 @@ def registry_versions(root):
 
 def matrix(root, boards, versions):
     config = json.loads((root / "ci/versions.json").read_text(encoding="utf-8"))
-    return {"include": [dict(board=b["board"], target=b["target"], idf=idf, bmgr=v,
-                             component_manager=config["component_manager"][idf],
-                             bmgr_assist=config["bmgr_assist"])
-                        for b in boards for idf in config["idf"] for v in versions]}
+    if not set(config.get("brookesia_idf", [])).issubset(config["idf"]):
+        raise ValueError("Brookesia test versions must be in the main IDF matrix")
+    cells = []
+    profiles = root / "integrations/brookesia_hal_custom/profiles"
+    for board in boards:
+        modes = ["none"]
+        if (profiles / board["board"] / "sdkconfig.defaults").is_file():
+            modes.append("brookesia")
+        for idf in config["idf"]:
+            for version in versions:
+                for mode in modes:
+                    if mode == "brookesia" and idf not in config.get("brookesia_idf", []):
+                        continue
+                    cells.append(dict(board=board["board"], target=board["target"],
+                                      idf=idf, bmgr=version, integration=mode,
+                                      component_manager=config["component_manager"][idf],
+                                      bmgr_assist=config["bmgr_assist"]))
+    return {"include": cells}
+
+
+def configure_integration(root, name):
+    path = root / "ci/test_app/main/idf_component.yml"
+    data = load_yaml(path)
+    if name == "brookesia":
+        component = root / "integrations/brookesia_hal_custom"
+        if not (component / "CMakeLists.txt").is_file():
+            raise ValueError("Brookesia integration component is missing")
+        data["dependencies"]["brookesia_hal_custom"] = {
+            "override_path": "../../../integrations/brookesia_hal_custom"}
+    elif name == "none":
+        data["dependencies"].pop("brookesia_hal_custom", None)
+    else:
+        raise ValueError("unknown integration")
+    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 
 def pin(root, version):
@@ -135,6 +165,8 @@ def main():
     sub.add_parser("check")
     pin_parser = sub.add_parser("pin")
     pin_parser.add_argument("version")
+    integration = sub.add_parser("integration")
+    integration.add_argument("name", choices=("none", "brookesia"))
     plan = sub.add_parser("matrix")
     scope = plan.add_mutually_exclusive_group(required=True)
     scope.add_argument("--all", action="store_true")
@@ -145,6 +177,9 @@ def main():
     try:
         if args.command == "pin":
             pin(args.root, args.version)
+            return 0
+        if args.command == "integration":
+            configure_integration(args.root, args.name)
             return 0
         boards = discover(args.root)
         if args.command == "check":

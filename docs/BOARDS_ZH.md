@@ -38,15 +38,16 @@ boards/
 
 - 显式包含 `dev_custom.h`，适配 Board Manager 0.7.2 的自定义设备注册接口。
 - `sdkconfig.defaults.board` 仅保留硬件默认配置，由应用自行选择功能配置和分区表。
-- 不引入上游的 `brookesia_hal_custom` 组件及其 YAML 依赖。它为 AMOLED 亮度控制注册
-  Brookesia 的 `BacklightIface` 插件，不是 Board Manager 板卡发现、显示、触摸、
-  音频、存储或 PMU 设备定义所必需的部分。
+- 将三份 Brookesia 调光插件合并到一份可选组件 `integrations/brookesia_hal_custom/`，
+  三块板卡的原应用配置分别保存在其 `profiles/` 目录。板卡 YAML 不再自动选择框架插件，
+  应用可[显式接入](INTEGRATIONS_ZH.md)。
 - 将 1.8、2.16 的 SD 挂载失败自动格式化关闭，挂载失败会报错，不会清空已有卡片。
 - 删除值相同的重复 YAML 键，修正过时的引脚注释。
 
-导入的 PMU 电源轨及充电初始化保持不变。各屏幕的初始化源码已经通过显示控制器设置初始亮度。
-运行时调光由使用本组件包的应用负责。需要 `BacklightIface` 的 Brookesia 应用，应在应用层
-提供框架适配；本板卡包不导出该插件，也不依赖 Brookesia HAL。
+导入的 PMU 电源轨及充电初始化保持不变。显示、触摸、音频、SD、外设配置和面板初始化
+继续保存在各板卡目录。共用集成保留原调光方法、插件与接口名称、显示分组、线程互斥、
+命令格式及默认值。AXP2101 实现继续随板卡维护，因为 1.8 的初始化还涉及 GPIO 扩展器，
+合并这些路径属于另一项硬件行为修改。
 
 ## 硬件资料核对
 
@@ -94,6 +95,6 @@ CST816S 是兼容驱动的 API 名称，V2 实际安装的是 CST820。
 ## 来源许可证
 
 Brookesia 板卡包采用 Apache-2.0，导入文件保留原 SPDX 声明，包括初始化代码中的 CC0-1.0。
-请保留原版权头。托管驱动遵循各自的许可证，本组件包不改变其授权。
+请保留原版权头。导入的集成更新日志保持上游原文。托管驱动遵循各自的许可证，本组件包不改变其授权。
 详见[上游板卡包许可证](https://github.com/espressif/esp-brookesia/blob/6a087b6d76e989802b72fdb835928b273af76af8/hal/brookesia_hal_boards/license.txt)及
 [CC0-1.0 条款](https://creativecommons.org/publicdomain/zero/1.0/legalcode.en)。

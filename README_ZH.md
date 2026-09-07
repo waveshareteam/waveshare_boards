@@ -78,6 +78,7 @@ idf.py bmgr -l
 
 ```text
 boards/<完整型号>/      板卡信息、外设、设备与初始化代码
+integrations/          跨板卡共用的可选框架适配
 idf_component.yml      组件元数据与托管依赖
 CMakeLists.txt         板卡包组件注册
 ci/test_app/           Board Manager 集成编译测试
@@ -105,6 +106,7 @@ python -m unittest discover -s ci/scripts -p 'test_*.py' -v
 ## 📚 文档
 
 - [板卡组织、硬件版本与迁移说明](docs/BOARDS_ZH.md)
+- [可选 Brookesia 调光集成](docs/INTEGRATIONS_ZH.md)
 - [CI 覆盖范围与本地验证](docs/CI_ZH.md)
 - [组件库凭据与发布](docs/PUBLISHING_ZH.md)
 - [贡献指南](CONTRIBUTING_ZH.md)

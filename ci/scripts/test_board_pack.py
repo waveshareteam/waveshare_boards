@@ -56,7 +56,7 @@ class BoardPackTests(unittest.TestCase):
         return result, values
 
     def test_discovery_excludes_generated_and_upstream(self):
-        for root in ('ci', 'managed_components', 'components', 'firmware', 'libraries', '.hidden'):
+        for root in ('ci', 'managed_components', 'components', 'firmware', 'libraries', 'integrations', '.hidden'):
             self.add_board(f'{root}/ignored')
         self.assertEqual(['alpha', 'beta'], [b['board'] for b in bp.discover(self.root)])
 
@@ -182,6 +182,35 @@ class BoardPackTests(unittest.TestCase):
         self.assertEqual({'idf-component-manager==2.5.0', 'idf-component-manager==3.0.3'},
                          {c['component_manager'] for c in cells})
         self.assertEqual('true', values['has_builds'])
+
+    def test_matrix_only_adds_integration_for_declared_profiles(self):
+        self.write('integrations/brookesia_hal_custom/profiles/alpha/sdkconfig.defaults', '# profile\n')
+        result, values = self.cli('matrix', '--all', '--bmgr', '0.7.2')
+        self.assertEqual(0, result.returncode, result.stderr)
+        cells = json.loads(values['matrix'])['include']
+        self.assertEqual(5, len(cells))
+        opt_in = [cell for cell in cells if cell['integration'] == 'brookesia']
+        self.assertEqual(1, len(opt_in))
+        self.assertEqual({'v6.1'}, {cell['idf'] for cell in opt_in})
+        self.assertEqual({'alpha'}, {cell['board'] for cell in opt_in})
+        self.assertTrue(bp.route(self.boards, ['integrations/brookesia_hal_custom/README.md'])['docs_only'])
+        self.assertEqual(self.boards, bp.route(self.boards, ['integrations/brookesia_hal_custom/src/plugin.cpp'])['boards'])
+
+    def test_integration_cli_preserves_pack_and_requires_component(self):
+        self.write('ci/test_app/main/idf_component.yml',
+                   'dependencies:\n  waveshare_boards:\n    override_path: ../../../\n')
+        result, _ = self.cli('integration', 'brookesia')
+        self.assertEqual(2, result.returncode)
+        self.write('integrations/brookesia_hal_custom/CMakeLists.txt', 'idf_component_register()\n')
+        result, _ = self.cli('integration', 'brookesia')
+        self.assertEqual(0, result.returncode, result.stderr)
+        path = self.root / 'ci/test_app/main/idf_component.yml'
+        deps = bp.load_yaml(path)['dependencies']
+        self.assertEqual('../../../', deps['waveshare_boards']['override_path'])
+        self.assertEqual('../../../integrations/brookesia_hal_custom', deps['brookesia_hal_custom']['override_path'])
+        result, _ = self.cli('integration', 'none')
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual({'waveshare_boards'}, set(bp.load_yaml(path)['dependencies']))
 
     def test_pin_is_exact_and_preserves_pack(self):
         self.write('ci/test_app/main/idf_component.yml',
