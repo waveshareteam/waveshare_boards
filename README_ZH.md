@@ -42,7 +42,7 @@
 
 ## 🚀 快速开始
 
-先激活 ESP-IDF 环境。在组件库版本发布之前，将本仓库克隆到**已有 ESP-IDF 应用**的组件目录：
+先激活 ESP-IDF 环境。使用本地源码时，将本仓库克隆到**已有 ESP-IDF 应用**的组件目录：
 
 ```bash
 mkdir -p components
@@ -63,7 +63,7 @@ idf.py build
 组件包已经公开依赖 `espressif/esp_board_manager`；应用可以包含
 `esp_board_manager.h`，并通过 `esp_board_manager_init()` 初始化所选板卡。
 
-维护者正式发布组件后，可以通过组件库安装，替代本地克隆：
+也可以通过组件库安装已发布版本：
 
 ```bash
 idf.py add-dependency "waveshare/waveshare_boards"
@@ -71,15 +71,13 @@ idf.py reconfigure
 idf.py bmgr -l
 ```
 
-计划使用的组件库名称为 `waveshare/waveshare_boards`。仓库里的版本号或打包检查通过，
-不代表该版本已经在组件库发布。
+可用版本见[在线组件库](https://components.espressif.com/components/waveshare/waveshare_boards)。
 
 ## 🗂️ 仓库结构
 
 ```text
 boards/<完整型号>/      板卡信息、外设、设备与初始化代码
 include/               不依赖应用框架的 AMOLED 调光函数
-integrations/          跨板卡共用的可选框架适配
 idf_component.yml      组件元数据与托管依赖
 CMakeLists.txt         板卡包组件注册
 ci/test_app/           Board Manager 集成编译测试
@@ -107,7 +105,7 @@ python -m unittest discover -s ci/scripts -p 'test_*.py' -v
 ## 📚 文档
 
 - [板卡组织、硬件版本与迁移说明](docs/BOARDS_ZH.md)
-- [AMOLED 调光与可选 Brookesia 集成](docs/INTEGRATIONS_ZH.md)
+- [AMOLED 亮度控制](docs/INTEGRATIONS_ZH.md)
 - [CI 覆盖范围与本地验证](docs/CI_ZH.md)
 - [组件库凭据与发布](docs/PUBLISHING_ZH.md)
 - [贡献指南](CONTRIBUTING_ZH.md)

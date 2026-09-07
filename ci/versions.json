@@ -7,8 +7,5 @@
     "v5.5.5": "idf-component-manager==2.5.0",
     "v6.1": "idf-component-manager==3.0.3"
   },
-  "bmgr_assist": "esp-bmgr-assist==0.8.3",
-  "brookesia_idf": [
-    "v6.1"
-  ]
+  "bmgr_assist": "esp-bmgr-assist==0.8.3"
 }
