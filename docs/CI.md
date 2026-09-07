@@ -4,7 +4,7 @@
 
 ## Build contract
 
-[The workflow](https://github.com/waveshareteam/waveshare-boards/blob/main/.github/workflows/ci.yml)
+[The workflow](https://github.com/waveshareteam/waveshare_boards/blob/main/.github/workflows/ci.yml)
 discovers first-party board definitions and builds `ci/test_app` for each selected
 board. It does not scan upstream board packs or publish firmware artifacts.
 
@@ -15,8 +15,8 @@ published versions satisfying the range are tested, with duplicates removed.
 Registry lookup failures fail the job. Each matrix entry records an exact version.
 
 The initial Board Manager floor is **0.7.2**, matching the reference board-pack
-template. The current floor and latest resolve to the same version, giving two
-builds for the one board. Keep the floor until a deliberate compatibility change
+template. The current floor and latest resolve to the same version, giving eight
+builds for four boards across the two IDF lines. Keep the floor until a deliberate compatibility change
 is tested. Unsupported catalog profiles or generation failures fail CI; they are
 not counted as successful builds.
 
@@ -27,13 +27,12 @@ consistent with its 3.0.x constraints and required CMake interface version 5;
 2.5.0 cannot serve that interface. Revisit these tooling pins when upgrading the matrix and
 rerun generation and compilation on both IDF lines.
 
-Board Manager 0.7.2 discovers managed packs by a directory name containing
-`boards`, so `waveshare/waveshare-boards` is discovered after registry installation.
-Local clones under an application's `components/` directory are also scanned.
-The integration test instead uses `override_path`; this version's override-name
-filter recognizes underscore-based board names but not `waveshare-boards`.
-CI therefore passes `-c ../..` to select the repository explicitly. This is the
-official customer-path option and requires no changes to Board Manager.
+Board Manager 0.7.2 recognizes `waveshare_boards` in managed installs, local
+`components/` clones, and manifest `override_path` dependencies. The integration
+test uses the override form and invokes discovery without `-c`.
+Use `boards/<full_model>/` inside the pack: local scanning begins at the
+application's `components/` root, so adding another chip directory exceeds its
+three-level search limit. See [layout and source evidence](BOARDS.md).
 
 ## Change routing
 
@@ -63,7 +62,7 @@ changing public documentation.
 
 ## Local reproduction
 
-Clone into a directory named `waveshare-boards`. With the desired ESP-IDF environment
+Clone into a directory named `waveshare_boards`. With the desired ESP-IDF environment
 active, install Component Manager 2.5.0 for IDF 5.5 or 3.0.3 for IDF 6.1,
 then run from that directory:
 
@@ -75,10 +74,10 @@ python scripts/update_supported_boards_table.py --check
 python ci/scripts/check_docs.py
 python ci/scripts/board_pack.py matrix --all
 python ci/scripts/board_pack.py pin 0.7.2
-idf.py -C ci/test_app bmgr -l -c ../..
-idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7 -c ../..
+idf.py -C ci/test_app bmgr -l
+idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7
 idf.py -C ci/test_app build
-compote component pack --name waveshare-boards
+compote component pack --name waveshare_boards
 ```
 
 Use a fresh checkout for each IDF/Board Manager combination so generated
@@ -97,9 +96,9 @@ with both framework lines and the hardware. The setup function validates the
 Board Manager-selected I2C address and delegates to the managed driver.
 
 Successful compilation proves API and generated-code compatibility, not wiring,
-PSRAM provisioning, touch reset sequencing, or physical operation. The repository
-does not contain local schematics. Hardware-facing changes must provide schematic
-or official reference evidence and report physical test results separately.
+PSRAM provisioning, touch reset sequencing, or physical operation. Official schematic links and the AMOLED migration checks are recorded in
+[board notes](BOARDS.md). Physical operation and the full Brookesia application
+remain separate validation steps.
 
 Primary references: [IDF v5.5.5](https://github.com/espressif/esp-idf/releases/tag/v5.5.5),
 [IDF v6.1](https://github.com/espressif/esp-idf/releases/tag/v6.1),

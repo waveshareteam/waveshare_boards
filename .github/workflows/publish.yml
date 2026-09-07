@@ -53,4 +53,4 @@ jobs:
           if [[ "$DRY_RUN" == true ]]; then
             options+=(--dry-run)
           fi
-          compote component upload --namespace waveshare --name waveshare-boards "${options[@]}"
+          compote component upload --namespace waveshare --name waveshare_boards "${options[@]}"

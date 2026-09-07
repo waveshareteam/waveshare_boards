@@ -79,9 +79,24 @@ class BoardPackTests(unittest.TestCase):
             bp.discover(self.root)
 
     def test_depth_is_checked(self):
-        self.add_board('a/b/c/deep')
+        self.add_board('boards/esp32s3/deep')
         with self.assertRaises(ValueError):
             bp.discover(self.root)
+
+    def test_grouped_board_component_routes_through_workflow_cli(self):
+        self.add_board('boards/gamma')
+        base = self.initialize_git()
+        self.write('boards/gamma/components/custom/source.c', 'int value;\n')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'Board component fixture')
+        result, values = self.cli('matrix', '--base', base, '--bmgr', '0.7.2')
+        self.assertEqual(0, result.returncode, result.stderr)
+        cells = json.loads(values['matrix'])['include']
+        self.assertEqual(2, len(cells))
+        self.assertEqual({'gamma'}, {c['board'] for c in cells})
+        routed = bp.route(bp.discover(self.root), ['boards/gamma/components/custom/CHANGELOG.md'])
+        self.assertTrue(routed['docs_only'])
+        self.assertEqual([], routed['boards'])
 
     def test_docs_beside_source_select_zero(self):
         for path in ('README.md', 'alpha/README.md', 'ci/test_app/README.md',
@@ -170,12 +185,12 @@ class BoardPackTests(unittest.TestCase):
 
     def test_pin_is_exact_and_preserves_pack(self):
         self.write('ci/test_app/main/idf_component.yml',
-                   'dependencies:\n  espressif/esp_board_manager:\n    version: "*"\n  waveshare-boards:\n    override_path: ../../../\n')
+                   'dependencies:\n  espressif/esp_board_manager:\n    version: "*"\n  waveshare_boards:\n    override_path: ../../../\n')
         result, _ = self.cli('pin', '0.7.2')
         self.assertEqual(0, result.returncode)
         deps = bp.load_yaml(self.root / 'ci/test_app/main/idf_component.yml')['dependencies']
         self.assertEqual('==0.7.2', deps['espressif/esp_board_manager']['version'])
-        self.assertEqual('../../../', deps['waveshare-boards']['override_path'])
+        self.assertEqual('../../../', deps['waveshare_boards']['override_path'])
         for value in ('*', '0.7.2;false', '1.0.0-rc1'):
             with self.assertRaises(ValueError):
                 bp.pin(self.root, value)

@@ -3,7 +3,7 @@
 [简体中文](SUPPORT_ZH.md) · [Home](README.md)
 
 For board-definition, generation, or compilation problems, use the
-[repository issue form](https://github.com/waveshareteam/waveshare-boards/issues/new/choose).
+[repository issue form](https://github.com/waveshareteam/waveshare_boards/issues/new/choose).
 Include the board and revision, exact ESP-IDF and Board Manager versions,
 reproduction steps, and the first relevant error. Remove credentials and
 personal or device identifiers from logs.

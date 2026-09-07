@@ -4,7 +4,7 @@
 
 ## 编译约定
 
-[工作流](https://github.com/waveshareteam/waveshare-boards/blob/main/.github/workflows/ci.yml)
+[工作流](https://github.com/waveshareteam/waveshare_boards/blob/main/.github/workflows/ci.yml)
 发现第一方板卡定义，并为每块选中的板卡编译 `ci/test_app`。
 它不扫描上游板卡包，也不发布固件产物。
 
@@ -13,7 +13,7 @@
 相同版本合并。组件库查询失败会使任务失败，每个矩阵项均记录明确版本。
 
 Board Manager 初始最低版本为 **0.7.2**，与参考板卡包模板一致。
-当前最低版与最新版相同，因此一块板卡对应两次编译。
+当前最低版与最新版相同，因此四块板卡在两个 IDF 版本线上共八次编译。
 调整最低版本前需要明确兼容性变更并测试。
 不支持的芯片能力配置或生成失败会使 CI 失败，不会被计为编译成功。
 
@@ -22,11 +22,10 @@ Kconfig 条件依赖的处理问题。辅助工具为 **esp-bmgr-assist 0.8.3**�
 IDF 6.1 使用符合官方 3.0.x 约束的 Component Manager **3.0.3**，以支持 CMake 接口版本 5；2.5.0 不支持该接口。
 升级矩阵时重新评估这些工具版本，并在两个 IDF 版本线上重新验证生成和编译。
 
-Board Manager 0.7.2 按目录名中的 `boards` 识别托管板卡包，因此从组件库安装
-`waveshare/waveshare-boards` 后可以自动发现。克隆到应用 `components/` 目录中的板卡包也会被扫描。
-集成测试使用 `override_path`；此版本的覆盖依赖名称筛选只识别下划线形式的板卡名称，
-不识别 `waveshare-boards`。因此 CI 通过官方的 customer-path 参数 `-c ../..`
-显式指定仓库路径，无需修改 Board Manager。
+Board Manager 0.7.2 可在托管安装、`components/` 本地克隆和清单 `override_path`
+依赖三种形式下识别 `waveshare_boards`。集成测试使用覆盖依赖，不传 `-c` 参数。
+组件包内采用 `boards/<完整型号>/`：本地扫描从应用的 `components/` 根目录开始，
+再增加一层芯片目录会超过其三层搜索限制。详见[目录与源码依据](BOARDS_ZH.md)。
 
 ## 变更路由
 
@@ -55,7 +54,7 @@ Board Manager 0.7.2 按目录名中的 `boards` 识别托管板卡包，因此�
 
 ## 本地复现
 
-将仓库克隆到名为 `waveshare-boards` 的目录，激活所需的 ESP-IDF 环境，为 IDF 5.5 安装 Component Manager 2.5.0，为 IDF 6.1 安装 3.0.3，然后在该目录执行：
+将仓库克隆到名为 `waveshare_boards` 的目录，激活所需的 ESP-IDF 环境，为 IDF 5.5 安装 Component Manager 2.5.0，为 IDF 6.1 安装 3.0.3，然后在该目录执行：
 
 ```bash
 python -m pip install PyYAML==6.0.3 esp-bmgr-assist==0.8.3
@@ -65,10 +64,10 @@ python scripts/update_supported_boards_table.py --check
 python ci/scripts/check_docs.py
 python ci/scripts/board_pack.py matrix --all
 python ci/scripts/board_pack.py pin 0.7.2
-idf.py -C ci/test_app bmgr -l -c ../..
-idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7 -c ../..
+idf.py -C ci/test_app bmgr -l
+idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7
 idf.py -C ci/test_app build
-compote component pack --name waveshare-boards
+compote component pack --name waveshare_boards
 ```
 
 每个 IDF / Board Manager 组合使用独立干净副本，避免生成组件、依赖锁和 sdkconfig 跨环境混用。
@@ -83,7 +82,8 @@ GT911 驱动继续使用板卡原有的托管依赖 **1.2.1** 约束；更换版
 初始化函数校验 Board Manager 选出的 I2C 地址，然后调用托管驱动。
 
 编译成功证明 API 和生成代码兼容，不证明接线、PSRAM 配置、触摸复位时序或实机运行正确。
-仓库没有本地原理图，修改硬件行为时需提供原理图或官方资料依据，并单独说明实机测试结果。
+官方原理图链接与 AMOLED 迁移核对内容见[板卡说明](BOARDS_ZH.md)。
+实机运行和完整 Brookesia 应用需要分别验证。
 
 主要资料：[IDF v5.5.5](https://github.com/espressif/esp-idf/releases/tag/v5.5.5)、
 [IDF v6.1](https://github.com/espressif/esp-idf/releases/tag/v6.1)、

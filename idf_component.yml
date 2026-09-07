@@ -1,8 +1,8 @@
 version: "0.1.0"
 description: Waveshare board definitions for ESP Board Manager
 license: Apache-2.0
-url: https://github.com/waveshareteam/waveshare-boards
-repository: https://github.com/waveshareteam/waveshare-boards.git
+url: https://github.com/waveshareteam/waveshare_boards
+repository: https://github.com/waveshareteam/waveshare_boards.git
 tags:
   - esp_board_manager
   - board_manager

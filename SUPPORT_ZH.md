@@ -2,7 +2,7 @@
 
 [English](SUPPORT.md) · [首页](README_ZH.md)
 
-板卡定义、生成或编译问题请使用[仓库问题表单](https://github.com/waveshareteam/waveshare-boards/issues/new/choose)。
+板卡定义、生成或编译问题请使用[仓库问题表单](https://github.com/waveshareteam/waveshare_boards/issues/new/choose)。
 请提供板卡型号与版本、准确的 ESP-IDF 和 Board Manager 版本、复现步骤以及第一处相关错误。
 日志中请删除凭据和个人、设备标识。
 
