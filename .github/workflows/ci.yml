@@ -6,6 +6,11 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_call:
+    inputs:
+      full_validation:
+        description: Build every board before publishing a new version
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -37,7 +42,9 @@ jobs:
       - name: Install validation tools
         run: python -m pip install PyYAML==6.0.3 idf-component-manager==2.5.0
       - name: Test CI helpers
-        run: python -m unittest discover -s ci/scripts -p 'test_*.py' -v
+        run: |
+          python -m unittest discover -s ci/scripts -p 'test_*.py' -v
+          node --test ci/scripts/test_github_release.cjs
       - name: Check board definitions and documentation navigation
         run: |
           python ci/scripts/board_pack.py check
@@ -48,10 +55,13 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          FULL_VALIDATION: ${{ inputs.full_validation || false }}
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "$EVENT_NAME" == "pull_request" || "$EVENT_NAME" == "push" ]]; then
+          if [[ "$FULL_VALIDATION" == true ]]; then
+            python ci/scripts/board_pack.py matrix --all
+          elif [[ "$EVENT_NAME" == "pull_request" || "$EVENT_NAME" == "push" ]]; then
             python ci/scripts/board_pack.py matrix --base "$BASE_SHA"
           else
             python ci/scripts/board_pack.py matrix --all

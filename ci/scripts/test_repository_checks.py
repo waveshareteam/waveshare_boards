@@ -56,18 +56,36 @@ class RepositoryCheckTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             catalog.update(self.root)
 
-    def test_real_publish_requires_matching_tag_and_main_ancestry(self):
+    def test_real_publish_requires_main_or_matching_tag_and_main_ancestry(self):
         (self.root / 'idf_component.yml').write_text('version: "0.1.0"\n')
         check_release.check(self.root, 'true', 'refs/heads/feature')
-        for ref in ('refs/heads/main', 'refs/tags/v0.2.0'):
+        for ref in ('refs/heads/feature', 'refs/tags/v0.2.0'):
             with self.assertRaises(ValueError):
                 check_release.check(self.root, 'false', ref)
         with patch('check_release.subprocess.run') as run:
+            self.assertEqual('0.1.0', check_release.check(self.root, 'false', 'refs/heads/main'))
             check_release.check(self.root, 'false', 'refs/tags/v0.1.0')
             self.assertEqual(['git', 'merge-base', '--is-ancestor', 'HEAD', 'origin/main'], run.call_args.args[0])
             run.side_effect = subprocess.CalledProcessError(1, 'git')
             with self.assertRaises(subprocess.CalledProcessError):
                 check_release.check(self.root, 'false', 'refs/tags/v0.1.0')
+
+    def test_release_rejects_invalid_versions_and_modes(self):
+        for version in ('01.0.0', '0.1.0-rc1', 'bad;command'):
+            (self.root / 'idf_component.yml').write_text(f'version: {version!r}\n')
+            with self.assertRaises(ValueError):
+                check_release.check(self.root, 'true', 'refs/heads/main')
+        with self.assertRaises(ValueError):
+            check_release.check(self.root, 'yes', 'refs/heads/main')
+
+    def test_release_cli_emits_manifest_version(self):
+        output = self.root / 'outputs'
+        result = subprocess.run([sys.executable, 'ci/scripts/check_release.py'], cwd=ROOT,
+                                env={**os.environ, 'DRY_RUN': 'true', 'GITHUB_OUTPUT': str(output)},
+                                capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        version = yaml.safe_load((ROOT / 'idf_component.yml').read_text())['version']
+        self.assertEqual(f'version={version}\ntag=v{version}\n', output.read_text())
 
     def test_exact_lightweight_workflow_commands(self):
         for command in [['ci/scripts/board_pack.py', 'check'],
@@ -88,10 +106,19 @@ class RepositoryCheckTests(unittest.TestCase):
         self.assertIn('always()', jobs['result']['if'])
         self.assertNotIn('secrets.', (ROOT / '.github/workflows/ci.yml').read_text())
         publish = yaml.load((ROOT / '.github/workflows/publish.yml').read_text(), Loader=yaml.BaseLoader)
-        self.assertEqual(['workflow_dispatch'], list(publish['on']))
+        self.assertEqual(['main'], publish['on']['push']['branches'])
         self.assertEqual('true', publish['on']['workflow_dispatch']['inputs']['dry_run']['default'])
         self.assertEqual('component-registry', publish['jobs']['upload']['environment'])
-        self.assertEqual('validate', publish['jobs']['upload']['needs'])
+        self.assertEqual(['prepare', 'validate'], publish['jobs']['upload']['needs'])
+        self.assertEqual('true', publish['jobs']['validate']['with']['full_validation'])
+        self.assertIn('needs.prepare.outputs.publish', publish['jobs']['validate']['if'])
+        self.assertEqual(['prepare', 'upload'], publish['jobs']['release']['needs'])
+        self.assertIn('!inputs.dry_run', publish['jobs']['release']['if'])
+        self.assertEqual('read', publish['permissions']['contents'])
+        self.assertEqual('write', publish['jobs']['upload']['permissions']['contents'])
+        scope = next(step for step in jobs['validate']['steps'] if step.get('id') == 'scope')
+        self.assertIn('FULL_VALIDATION', scope['env'])
+        self.assertIn('matrix --all', scope['run'])
 
 
 if __name__ == '__main__':
