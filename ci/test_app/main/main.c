@@ -1,4 +1,5 @@
 #include "esp_board_manager.h"
+#include "waveshare_amoled.h"
 #include "esp_err.h"
 
 void app_main(void)

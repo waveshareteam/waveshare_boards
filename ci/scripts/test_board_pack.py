@@ -110,7 +110,7 @@ class BoardPackTests(unittest.TestCase):
     def test_direct_shared_global_and_governance(self):
         selected = bp.route(self.boards, ['alpha/setup_device.c'])
         self.assertEqual(['alpha'], [b['board'] for b in selected['boards']])
-        for path in ('ci/test_app/main/main.c', 'idf_component.yml', 'ci/versions.json',
+        for path in ('ci/test_app/main/main.c', 'include/waveshare_amoled.h', 'idf_component.yml', 'ci/versions.json',
                      '.github/workflows/ci.yml', 'ci/scripts/test_board_pack.py'):
             self.assertEqual(self.boards, bp.route(self.boards, [path])['boards'])
         for path in ('LICENSE', '.gitignore', '.github/ISSUE_TEMPLATE/bug_report.yml'):

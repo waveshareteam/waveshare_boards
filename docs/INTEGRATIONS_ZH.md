@@ -1,6 +1,27 @@
-# 可选框架集成
+# AMOLED 调光与可选集成
 
 [English](INTEGRATIONS.md) · [首页](../README_ZH.md) · [板卡结构](BOARDS_ZH.md)
+
+## 不依赖 Brookesia 的调光
+
+公共函数 `waveshare_amoled_set_brightness(io, percent)` 位于
+`include/waveshare_amoled.h`，不依赖 Brookesia，使用原有 QSPI 亮度命令控制所支持的
+CO5300 / SH8601 面板。普通应用初始化板卡后，可以使用显示设备的 IO 句柄调光：
+
+```c
+#include "esp_board_manager.h"
+#include "dev_display_lcd.h"
+#include "waveshare_amoled.h"
+
+// 在受支持的 AMOLED 板卡上，esp_board_manager_init() 成功之后：
+dev_display_lcd_handles_t *display = NULL;
+ESP_ERROR_CHECK(esp_board_manager_get_device_handle("display_lcd", (void **)&display));
+ESP_ERROR_CHECK(waveshare_amoled_set_brightness(display->io_handle, 75));
+```
+
+函数将超过 100 的百分比限制为 100，发送失败时返回 LCD IO 错误。
+它不缓存状态；下面的可选框架适配继续保留原有缓存读取、线程互斥与接口生命周期。
+RGB LCD 板卡不使用这条 QSPI AMOLED 命令。
 
 ## Brookesia AMOLED 调光
 
@@ -12,7 +33,7 @@
 
 - 设备名 `CustomDisplay`、接口实现名 `CustomDisplay:Backlight` 和显示分组 `display_lcd`。
 - `set_brightness()`、`get_brightness()`，百分比限制在 0–100，转换成面板的
-  0–255 亮度值，通过 QSPI 发送 `0x51` 命令。
+  0–255 亮度值，通过公共函数发送原有 QSPI `0x51` 命令。
 - 线程互斥、相同值不重复发送、错误返回与初始化行为。插件初始化亮度仍为 0%，
   后续由应用设置亮度。`get_brightness()` 返回最近成功设置的值，不是从硬件读回。
 - 独立灯光开关接口仍返回不支持，与原实现一致。
@@ -69,7 +90,9 @@ integrations/brookesia_hal_custom/profiles/
 
 CI 对四块板卡在两个 IDF 版本线上运行普通模式编译，共八项；
 另外在 IDF 6.1 上为三个 AMOLED 型号启用独立适配，共三项。
-它验证 HAL 接口的编译与插件链接，不替代实机调光或完整 Brookesia 应用测试。
+它验证 HAL 接口的编译与插件链接。主机测试覆盖公共函数的命令编码、百分比换算、
+范围限制、无效句柄和 IO 错误返回；CI 也会在两个 IDF 版本线上编译公共头文件。
+这些检查不替代实机调光或完整 Brookesia 应用测试。
 
 在干净副本中，通过仓库测试应用编译该适配：
 

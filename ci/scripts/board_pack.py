@@ -94,7 +94,7 @@ def route(boards, paths):
             selected.update(direct)
         else:
             selected.update(b["board"] for b in boards)
-            if not (value.startswith(("ci/", "scripts/", ".github/workflows/", "integrations/"))
+            if not (value.startswith(("ci/", "scripts/", ".github/workflows/", "integrations/", "include/"))
                     or value in {"CMakeLists.txt", "idf_component.yml"}):
                 unknown.append(value)
     return {"boards": [b for b in boards if b["board"] in selected],

@@ -41,6 +41,9 @@ expander drivers remain registry dependencies.
 The migration makes these changes to the imported profiles:
 
 - Include `dev_custom.h` explicitly for custom-device registration on Board Manager 0.7.2.
+- Extract the unchanged QSPI brightness command into the public
+  `waveshare_amoled_set_brightness()` helper. Both ordinary applications and the
+  optional framework adapter can use it without duplicating the hardware command.
 - Keep only hardware defaults in `sdkconfig.defaults.board`. Applications choose
   their own feature settings and partition layout.
 - Consolidate the three Brookesia brightness plugins into one optional component

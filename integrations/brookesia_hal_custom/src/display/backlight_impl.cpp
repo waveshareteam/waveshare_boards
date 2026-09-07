@@ -12,9 +12,8 @@
 #include "esp_lcd_panel_ops.h"
 #include "esp_board_device.h"
 #include "esp_board_manager_includes.h"
+#include "waveshare_amoled.h"
 #include "backlight_impl.hpp"
-
-#define LCD_OPCODE_WRITE_CMD (0x02ULL)
 
 namespace esp_brookesia::hal {
 
@@ -98,12 +97,7 @@ bool CustomDisplayBacklightImpl::set_brightness_internal(uint8_t percent, bool f
         return true;
     }
 
-    uint8_t data[1] = {static_cast<uint8_t>((255 * percent_clamped) / 100)};
-    int lcd_cmd = 0x51;
-    lcd_cmd &= 0xff;
-    lcd_cmd <<= 8;
-    lcd_cmd |= LCD_OPCODE_WRITE_CMD << 24;
-    auto ret = esp_lcd_panel_io_tx_param(get_io_handle(handles_), lcd_cmd, data, sizeof(data));
+    auto ret = waveshare_amoled_set_brightness(get_io_handle(handles_), percent_clamped);
     BROOKESIA_CHECK_ESP_ERR_RETURN(ret, false, "Failed to transmit brightness command");
 
     brightness_ = percent_clamped;

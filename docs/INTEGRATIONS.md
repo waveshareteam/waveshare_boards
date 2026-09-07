@@ -1,6 +1,29 @@
-# Optional framework integrations
+# AMOLED brightness and optional integrations
 
 [简体中文](INTEGRATIONS_ZH.md) · [Home](../README.md) · [Board layout](BOARDS.md)
+
+## Brightness without Brookesia
+
+The public `waveshare_amoled_set_brightness(io, percent)` helper is available in
+`include/waveshare_amoled.h`. It sends the original QSPI brightness command for
+the supported CO5300/SH8601 panels without a Brookesia dependency. After board
+initialization, an ordinary application can use the selected display's IO handle:
+
+```c
+#include "esp_board_manager.h"
+#include "dev_display_lcd.h"
+#include "waveshare_amoled.h"
+
+// After esp_board_manager_init() succeeds for a supported AMOLED board:
+dev_display_lcd_handles_t *display = NULL;
+ESP_ERROR_CHECK(esp_board_manager_get_device_handle("display_lcd", (void **)&display));
+ESP_ERROR_CHECK(waveshare_amoled_set_brightness(display->io_handle, 75));
+```
+
+The function clamps percentages above 100 and returns the LCD IO error on failure.
+It has no cached state; the optional framework adapter below retains the original
+cached getter, mutex, and interface lifecycle. RGB LCD boards do not use this
+QSPI AMOLED command.
 
 ## Brookesia AMOLED brightness
 
@@ -15,7 +38,7 @@ The shared adapter preserves:
 - Device name `CustomDisplay`, interface implementation `CustomDisplay:Backlight`,
   and display group `display_lcd`.
 - `set_brightness()` and `get_brightness()`, clamping to 0–100 percent and converting
-  to the panel's 0–255 brightness command (`0x51` over QSPI).
+  to the panel's 0–255 brightness command (`0x51` over QSPI) through the public helper.
 - The mutex, unchanged-command suppression, error propagation, and initialization
   behavior. The plugin starts at 0 percent; the application then chooses brightness.
   `get_brightness()` returns the last successfully set value, not a hardware readback.
@@ -81,7 +104,9 @@ The ordinary hardware defaults remain beside each board.
 CI builds the plain board pack for all four boards on both IDF lines (eight
 builds), then separately enables this adapter for the three AMOLED boards on
 IDF 6.1 (three builds). This proves compilation and plugin linkage against the
-HAL interfaces. It does not exercise physical brightness changes or a full
+HAL interfaces. Host tests cover the public command encoding, percentage scaling,
+clamping, invalid handles, and IO-error propagation. CI also compiles the public
+header with both IDF lines. It does not exercise physical brightness changes or a full
 Brookesia application.
 
 To compile the adapter with the repository's test app in a fresh checkout:

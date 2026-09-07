@@ -3,6 +3,7 @@ idf_component_register(
     SRCS "src/display/device.cpp" "src/display/backlight_impl.cpp"
     INCLUDE_DIRS "include"
     PRIV_INCLUDE_DIRS "src"
+    REQUIRES waveshare_boards
 )
 
 target_compile_features(${COMPONENT_LIB} PUBLIC cxx_std_17)

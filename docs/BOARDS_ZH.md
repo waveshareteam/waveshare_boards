@@ -37,6 +37,8 @@ boards/
 本次对导入配置做了以下适配：
 
 - 显式包含 `dev_custom.h`，适配 Board Manager 0.7.2 的自定义设备注册接口。
+- 将原有 QSPI 亮度命令提取为公共函数 `waveshare_amoled_set_brightness()`，
+  普通应用与可选框架适配均可调用，硬件命令无需重复实现。
 - `sdkconfig.defaults.board` 仅保留硬件默认配置，由应用自行选择功能配置和分区表。
 - 将三份 Brookesia 调光插件合并到一份可选组件 `integrations/brookesia_hal_custom/`，
   三块板卡的原应用配置分别保存在其 `profiles/` 目录。板卡 YAML 不再自动选择框架插件，
