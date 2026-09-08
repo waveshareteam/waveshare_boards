@@ -23,6 +23,43 @@
 
 ## 📋 板卡目录
 
+产品图片来自微雪官方产品仓库。点击下方链接查看板卡定义或产品文档。
+
+<table>
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-AMOLED-1.75C</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.75C/6d19f7e16fb9a3be219e9eed43ca9eb56c88d01c/docs/images/esp32-s3-touch-amoled-1.75c.jpg" alt="ESP32-S3-Touch-AMOLED-1.75C 开发板产品图" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_amoled_1_75c/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">产品文档</a></p>
+    </td>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-AMOLED-1.8</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/7ab8f957e22ea1ab811256359f4eddcaaf49ee91/assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="ESP32-S3-Touch-AMOLED-1.8 开发板产品图" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_amoled_1_8/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">产品文档</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-AMOLED-2.16</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-2.16/225a62bff11b5d0a0b607873860d39485a9a9685/docs/assets/ESP32-S3-Touch-AMOLED-2.16-details-1.jpg" alt="ESP32-S3-Touch-AMOLED-2.16 开发板产品图" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_amoled_2_16/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">产品文档</a></p>
+    </td>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-LCD-7</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-LCD-7/bc51a84b30c0cea018fee6e0d7427ec10102060e/assets/Product-1.webp" alt="ESP32-S3-Touch-LCD-7 开发板产品图" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_lcd_7/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">产品文档</a></p>
+    </td>
+  </tr>
+</table>
+
 下表列出仓库中实际存在的定义。`spi_sd` 等外设声明描述的是总线，
 不代表已经提供完整的存储应用。
 

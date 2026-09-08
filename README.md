@@ -24,6 +24,44 @@ bilingual documentation, and generation/build checks.
 
 ## 📋 Board catalog
 
+Product images from Waveshare’s official product repositories. Follow the links
+below for board definitions and product documentation.
+
+<table>
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-AMOLED-1.75C</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.75C/6d19f7e16fb9a3be219e9eed43ca9eb56c88d01c/docs/images/esp32-s3-touch-amoled-1.75c.jpg" alt="ESP32-S3-Touch-AMOLED-1.75C development board" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_amoled_1_75c/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">Product documentation</a></p>
+    </td>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-AMOLED-1.8</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/7ab8f957e22ea1ab811256359f4eddcaaf49ee91/assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="ESP32-S3-Touch-AMOLED-1.8 development board" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_amoled_1_8/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">Product documentation</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-AMOLED-2.16</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-2.16/225a62bff11b5d0a0b607873860d39485a9a9685/docs/assets/ESP32-S3-Touch-AMOLED-2.16-details-1.jpg" alt="ESP32-S3-Touch-AMOLED-2.16 development board" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_amoled_2_16/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">Product documentation</a></p>
+    </td>
+    <td align="center" valign="top" width="50%">
+      <p><strong>ESP32-S3-Touch-LCD-7</strong></p>
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-LCD-7/bc51a84b30c0cea018fee6e0d7427ec10102060e/assets/Product-1.webp" alt="ESP32-S3-Touch-LCD-7 development board" width="360">
+      </a>
+      <p><a href="boards/esp32_s3_touch_lcd_7/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">Product documentation</a></p>
+    </td>
+  </tr>
+</table>
+
 The table lists definitions present in this repository. Peripheral declarations
 such as `spi_sd` describe a bus; they do not imply a complete storage application.
 
