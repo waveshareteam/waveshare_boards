@@ -23,6 +23,56 @@
 
 ## 📋 板卡目录
 
+<table>
+  <tr>
+    <td align="center" valign="middle" width="180">
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.75C/6d19f7e16fb9a3be219e9eed43ca9eb56c88d01c/docs/images/esp32-s3-touch-amoled-1.75c.jpg" alt="ESP32-S3-Touch-AMOLED-1.75C 开发板产品图" width="160">
+      </a>
+    </td>
+    <td valign="middle" width="600">
+      <p><strong>ESP32-S3-Touch-AMOLED-1.75C</strong></p>
+      <a href="boards/esp32_s3_touch_amoled_1_75c/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">产品文档</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="180">
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/7ab8f957e22ea1ab811256359f4eddcaaf49ee91/assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="ESP32-S3-Touch-AMOLED-1.8 开发板产品图" width="160">
+      </a>
+    </td>
+    <td valign="middle" width="600">
+      <p><strong>ESP32-S3-Touch-AMOLED-1.8</strong></p>
+      <a href="boards/esp32_s3_touch_amoled_1_8/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">产品文档</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="180">
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-2.16/225a62bff11b5d0a0b607873860d39485a9a9685/docs/assets/ESP32-S3-Touch-AMOLED-2.16-details-1.jpg" alt="ESP32-S3-Touch-AMOLED-2.16 开发板产品图" width="160">
+      </a>
+    </td>
+    <td valign="middle" width="600">
+      <p><strong>ESP32-S3-Touch-AMOLED-2.16</strong></p>
+      <a href="boards/esp32_s3_touch_amoled_2_16/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">产品文档</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="180">
+      <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-LCD-7/bc51a84b30c0cea018fee6e0d7427ec10102060e/assets/Product-1.webp" alt="ESP32-S3-Touch-LCD-7 开发板产品图" width="160">
+      </a>
+    </td>
+    <td valign="middle" width="600">
+      <p><strong>ESP32-S3-Touch-LCD-7</strong></p>
+      <a href="boards/esp32_s3_touch_lcd_7/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">产品文档</a>
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary>设备与外设定义</summary>
+
 下表列出仓库中实际存在的定义。`spi_sd` 等外设声明描述的是总线，
 不代表已经提供完整的存储应用。
 
@@ -34,6 +84,8 @@
 | [`esp32_s3_touch_amoled_2_16`](boards/esp32_s3_touch_amoled_2_16/) | ESP32-S3 | `axp2101_power_manager`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_touch`, `fs_sdcard` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `spi_display` |
 | [`esp32_s3_touch_lcd_7`](boards/esp32_s3_touch_lcd_7/) | ESP32-S3 | `display_lcd`, `lcd_touch` | `i2c_master`, `uart_rs485`, `uart_external`, `adc_sensor`, `spi_sd` |
 <!-- END SUPPORTED_BOARDS -->
+
+</details>
 
 板卡定义统一放在 `boards/<完整型号>/`。新增的三个 AMOLED 型号来自 Espressif Brookesia，
 详见[硬件版本与迁移说明](docs/BOARDS_ZH.md)。CI 校验生成与编译，实机运行效果需要单独测试。
