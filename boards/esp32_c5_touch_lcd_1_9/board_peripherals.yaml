@@ -1,0 +1,94 @@
+peripherals:
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 0
+      pins:
+        sda: 2
+        scl: 3
+      enable_internal_pullup: true
+      glitch_count: 7
+
+  # LCD and TF share GPIO5 as MOSI and GPIO7 as SCLK. TF reads data on GPIO6.
+  - name: spi_tf
+    type: spi
+    role: master
+    config:
+      spi_bus_config:
+        spi_port: SPI2_HOST
+        mosi_io_num: 5
+        miso_io_num: 6
+        sclk_io_num: 7
+        quadwp_io_num: -1
+        quadhd_io_num: -1
+        max_transfer_sz: 13600
+
+  - name: gpio_boot
+    type: gpio
+    role: io
+    config:
+      pin: 28
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      pull_down: false
+      default_level: 1
+
+  - name: gpio_power_key
+    type: gpio
+    role: io
+    config:
+      pin: 9
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      pull_down: false
+
+  - name: ledc_backlight
+    type: ledc
+    role: none
+    config:
+      gpio_num: 10
+      channel: LEDC_CHANNEL_0
+      timer_sel: LEDC_TIMER_0
+      freq_hz: 1000
+      duty: 0
+      duty_resolution: LEDC_TIMER_8_BIT
+      speed_mode: LEDC_LOW_SPEED_MODE
+      output_invert: false
+      sleep_mode: LEDC_SLEEP_MODE_NO_ALIVE_NO_PD
+
+  - name: gpio_touch_reset
+    type: gpio
+    role: io
+    config:
+      pin: 8
+      mode: GPIO_MODE_OUTPUT
+      default_level: 1
+
+  - name: gpio_touch_int
+    type: gpio
+    role: io
+    config:
+      pin: 0
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      pull_down: false
+
+  - name: gpio_imu_int
+    type: gpio
+    role: io
+    config:
+      pin: 1
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      pull_down: false
+
+  - name: gpio_axp_int
+    type: gpio
+    role: io
+    config:
+      pin: 25
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      pull_down: false
+      intr_type: GPIO_INTR_NEGEDGE

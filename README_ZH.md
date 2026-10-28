@@ -102,6 +102,7 @@
 <!-- BEGIN SUPPORTED_BOARDS -->
 | 开发板 | 芯片 | 设备定义 | 外设定义 |
 | --- | --- | --- | --- |
+| [`esp32_c5_touch_lcd_1_9`](boards/esp32_c5_touch_lcd_1_9/) | ESP32-C5 | `lcd_st7789v2`, `touch_cst816d`, `imu_qmi8658`, `tf_card`, `bat_axp2602` | `i2c_master`, `spi_tf`, `gpio_boot`, `gpio_power_key`, `ledc_backlight`, `gpio_touch_reset`, `gpio_touch_int`, `gpio_imu_int`, `gpio_axp_int` |
 | [`esp32_s3_lr1121_epaper_2_9`](boards/esp32_s3_lr1121_epaper_2_9/) | ESP32-S3 | `status_led`, `epaper_power_ctrl`, `epaper_ssd16xx`, `rtc_pcf85063a`, `bat_axp2602`, `radio_lr1121` | `i2c_master`, `spi_shared`, `gpio_boot`, `gpio_epaper_power` |
 | [`esp32_s3_lr1121_oled_1_54_xf`](boards/esp32_s3_lr1121_oled_1_54_xf/) | ESP32-S3 | `button_boot`, `button_power`, `button_menu`, `button_ptt`, `button_rtc_irq`, `radio`, `oled`, `rtc`, `battery`, `audio`, `sdcard` | `i2c_main`, `spi_radio`, `gpio_boot`, `gpio_power`, `gpio_menu`, `gpio_ptt`, `gpio_rtc_irq`, `gpio_amplifier`, `gpio_radio_cs`, `gpio_radio_irq`, `gpio_radio_reset`, `gpio_radio_busy`, `i2s_speaker`, `i2s_microphone` |
 | [`esp32_s3_touch_amoled_1_75c`](boards/esp32_s3_touch_amoled_1_75c/) | ESP32-S3 | `axp2101_power_manager`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `spi_display` |
