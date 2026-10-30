@@ -1,0 +1,202 @@
+# Devices Configuration
+devices:
+  - name: fs_sdcard
+    version: 1.0.0
+    type: fs_fat
+    sub_type: sdmmc
+    power_ctrl_device: sdcard_power_ctrl
+    config:
+      mount_point: /sdcard
+      vfs_config:
+        format_if_mount_failed: false
+        max_files: 5
+        allocation_unit_size: 16384
+      sub_config:
+        slot: SDMMC_HOST_SLOT_0
+        frequency: SDMMC_FREQ_HIGHSPEED
+        bus_width: 4
+        slot_flags: SDMMC_SLOT_FLAG_INTERNAL_PULLUP
+        ldo_chan_id: 4
+        pins:
+          clk: 43
+          cmd: 44
+          d0: 39
+          d1: 40
+          d2: 41
+          d3: 42
+          d4: -1
+          d5: -1
+          d6: -1
+          d7: -1
+          cd: -1
+          wp: -1
+    peripherals: []
+
+  - name: sdcard_power_ctrl
+    version: 1.0.0
+    type: power_ctrl
+    sub_type: gpio
+    peripherals:
+      - gpio_name: gpio_sd_power
+        active_level: 0
+
+  - name: audio_adc
+    version: 1.0.0
+    chip: es7210
+    type: audio_codec
+    config:
+      adc_enabled: true
+      sys_cfg:
+        is_master: false
+        no_mclk: false
+      # MIC1/MIC2 are the front capsules, MIC3 loops back the ES8311 output as the AEC reference,
+      # MIC4 is not connected. Labels run from MIC1 (LSB) to MIC4.
+      adc_cfg:
+        digital_mic: false
+        label: [FL, FR, RE, NA]
+    peripherals:
+      - i2c_name: i2c_master
+        address: '0x80'
+        frequency: 400000
+      - i2s_name: i2s_audio_in
+        clk_src: 0
+        tx_aux_out_io: -1
+        tx_aux_out_line: 0
+        tx_aux_out_invert: false
+
+  - name: audio_dac
+    version: 1.0.0
+    chip: es8311
+    type: audio_codec
+    config:
+      dac_enabled: true
+      sys_cfg:
+        is_master: false
+        no_mclk: false
+    peripherals:
+      - pa_name: gpio_pa_control
+        gain: 0
+        active_level: 1
+      - i2c_name: i2c_master
+        address: '0x30'
+        frequency: 400000
+      - i2s_name: i2s_audio_out
+        clk_src: 0
+        tx_aux_out_io: -1
+        tx_aux_out_line: 0
+        tx_aux_out_invert: false
+
+  - name: camera
+    version: 1.0.0
+    type: camera
+    sub_type: csi
+    config:
+      csi_config:
+        reset_io: -1
+        pwdn_io: -1
+        dont_init_ldo: true
+        xclk_config:
+          xclk_pin: -1
+          xclk_freq_hz: 20000000
+    peripherals:
+      - i2c_name: i2c_master
+        frequency: 400000
+      - ldo_name: ldo_mipi
+
+  - name: display_lcd
+    version: 1.0.0
+    chip: ek79007
+    type: display_lcd
+    sub_type: dsi
+    dependencies:
+      espressif/esp_lcd_ek79007: '*'
+    config:
+      invert_color: false
+      need_reset: true
+      bits_per_pixel: 16
+      rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+      data_endian: LCD_RGB_DATA_ENDIAN_BIG
+      reset_gpio_num: 33
+      reset_active_high: 0
+      dbi_config:
+        virtual_channel: 0
+        lcd_cmd_bits: 8
+        lcd_param_bits: 8
+      dpi_config:
+        virtual_channel: 0
+        dpi_clk_src: MIPI_DSI_DPI_CLK_SRC_DEFAULT
+        dpi_clock_freq_mhz: 52
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 3
+        flags:
+          use_dma2d: true
+          disable_lp: false
+        video_timing:
+          h_size: 1024
+          v_size: 600
+          hsync_back_porch: 160
+          hsync_pulse_width: 10
+          hsync_front_porch: 160
+          vsync_back_porch: 23
+          vsync_pulse_width: 1
+          vsync_front_porch: 12
+      io_3wire_spi_config:
+        line_config:
+          cs_io_type: IO_TYPE_GPIO
+          scl_io_type: IO_TYPE_GPIO
+          sda_io_type: IO_TYPE_GPIO
+    peripherals:
+      - ldo_name: ldo_mipi
+      - dsi_name: dsi_display
+
+  - name: lcd_touch
+    version: 1.0.0
+    chip: gt911
+    type: lcd_touch
+    sub_type: i2c
+    dependencies:
+      espressif/esp_lcd_touch_gt911: '*'
+    config:
+      io_i2c_config:
+        control_phase_bytes: 1
+        dc_bit_offset: 0
+        lcd_cmd_bits: 16
+        lcd_param_bits: 0
+        scl_speed_hz: 100000
+        transaction_timeout_ms: 0
+        flags:
+          dc_low_on_data: false
+          disable_control_phase: true
+      touch_config:
+        x_max: 1024
+        y_max: 600
+        rst_gpio_num: 23
+        int_gpio_num: -1
+        levels:
+          reset: 0
+          interrupt: 0
+        flags:
+          swap_xy: false
+          mirror_x: false
+          mirror_y: false
+    peripherals:
+      - i2c_name: i2c_master
+        i2c_addr: [0xBA, 0x28]
+
+  - name: lcd_brightness
+    version: 1.0.0
+    type: ledc_ctrl
+    config:
+      default_percent: 100
+    peripherals:
+      - ledc_name: ledc_backlight
+
+  - name: fs_spiffs
+    version: 1.0.0
+    type: fs_spiffs
+    config:
+      base_path: "/spiffs"
+      partition_label: storage
+      max_files: 5
+      format_if_mount_failed: false
