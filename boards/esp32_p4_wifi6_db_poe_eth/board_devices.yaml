@@ -1,0 +1,186 @@
+version: 1.0.0
+devices:
+  # MIPI-CSI camera template. Fill the control GPIOs after the camera module
+  # wiring and sensor model are confirmed.
+  - name: camera
+    type: camera
+    sub_type: csi
+    version: default
+    config:
+      csi_config:
+        reset_io: -1
+        pwdn_io: -1
+        dont_init_ldo: true
+        xclk_config:
+          xclk_pin: -1
+          xclk_freq_hz: 20000000
+    peripherals:
+      - i2c_name: i2c_master
+        frequency: 100000
+      - ldo_name: ldo_mipi
+
+  - name: audio_dac
+    chip: es8311
+    type: audio_codec
+    config:
+      adc_enabled: false
+      dac_enabled: true
+      # MCLK is wired on GPIO13; the ES8311 clock coefficients assume MCLK = 256 * fs.
+      sys_cfg:
+        no_mclk: false
+    peripherals:
+      - pa_name: gpio_pa_control
+        active_level: 1
+      - i2s_name: i2s_audio_out
+      - i2c_name: i2c_master
+        address: 0x30
+        frequency: 400000
+
+  # The same ES8311 records the single analog microphone; no DAC loopback reference is mixed in.
+  - name: audio_adc
+    chip: es8311
+    type: audio_codec
+    config:
+      adc_enabled: true
+      dac_enabled: false
+      sys_cfg:
+        no_mclk: false
+      adc_cfg:
+        # Labels are in codec_dev 2.0 channel order, from LSB to MSB.
+        label: [FC, NA]
+    peripherals:
+      - i2s_name: i2s_audio_in
+      - i2c_name: i2c_master
+        address: 0x30
+        frequency: 400000
+
+  - name: display_lcd
+    chip: jd9365
+    type: display_lcd
+    sub_type: dsi
+    version: default
+    dependencies:
+      waveshare/esp_lcd_jd9365: ^2.0.0
+    config:
+      reset_gpio_num: -1
+      rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+      bits_per_pixel: 16
+      reset_active_high: 0
+      dbi_config:
+        virtual_channel: 0
+        lcd_cmd_bits: 8
+        lcd_param_bits: 8
+      dpi_config:
+        virtual_channel: 0
+        dpi_clk_src: MIPI_DSI_DPI_CLK_SRC_DEFAULT
+        dpi_clock_freq_mhz: 80
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        # esp_lvgl_adapter uses the triple-buffer MIPI path by default.
+        num_fbs: 3
+        flags:
+          # esp_lvgl_adapter/bridge owns the DMA2D hook on IDF 6.
+          # Enabling it here would register the hook twice.
+          use_dma2d: false
+          disable_lp: false
+        video_timing:
+          h_size: 800
+          v_size: 1280
+          hsync_back_porch: 20
+          hsync_pulse_width: 20
+          hsync_front_porch: 40
+          vsync_back_porch: 10
+          vsync_pulse_width: 4
+          vsync_front_porch: 30
+    peripherals:
+      - name: i2c_master
+      - ldo_name: ldo_mipi
+      - dsi_name: dsi_display
+
+  - name: lcd_brightness
+    type: custom
+    version: 1.0.0
+    config:
+      i2c_address: 0x45
+      brightness_register: 0x96
+      default_percent: 100
+      scl_speed_hz: 100000
+    peripherals:
+      - name: i2c_master
+
+  # App assets and audio prompts; the image is built from firmware/brookesia/spiffs into "storage".
+  - name: fs_spiffs
+    type: fs_spiffs
+    config:
+      base_path: "/spiffs"
+      partition_label: storage
+      max_files: 5
+      format_if_mount_failed: false
+
+  - name: lcd_touch
+    chip: gt911
+    type: lcd_touch
+    sub_type: i2c
+    version: default
+    dependencies:
+      espressif/esp_lcd_touch_gt911: ^1.2.0~2
+    config:
+      io_i2c_config:
+        lcd_cmd_bits: 16
+        scl_speed_hz: 400000
+      touch_config:
+        x_max: 800
+        y_max: 1280
+        rst_gpio_num: -1
+        int_gpio_num: -1
+        levels:
+          reset: 0
+          interrupt: 0
+        flags:
+          swap_xy: false
+          mirror_x: false
+          mirror_y: false
+    peripherals:
+      - i2c_name: i2c_master
+        # 8-bit left-shifted GT911 addresses: 0x5D/0x14.
+        i2c_addr: [0xBA, 0x28]
+
+  - name: fs_sdcard
+    type: fs_fat
+    sub_type: sdmmc
+    version: default
+    power_ctrl_device: sdcard_power_ctrl
+    config:
+      mount_point: "/sdcard"
+      vfs_config:
+        format_if_mount_failed: false
+        max_files: 5
+        allocation_unit_size: 16384
+      sub_config:
+        slot: SDMMC_HOST_SLOT_0
+        # Start at 20 MHz for reliable bring-up; raise to HIGHSPEED after
+        # validating the board wiring and signal integrity.
+        frequency: SDMMC_FREQ_HIGHSPEED
+        bus_width: 4
+        slot_flags: 0
+        pins:
+          clk: 43
+          cmd: 44
+          d0: 39
+          d1: 40
+          d2: 41
+          d3: 42
+          d4: -1
+          d5: -1
+          d6: -1
+          d7: -1
+          cd: -1
+          wp: -1
+        ldo_chan_id: 4
+
+  - name: sdcard_power_ctrl
+    type: power_ctrl
+    sub_type: gpio
+    peripherals:
+      - gpio_name: gpio_sd_power
+        active_level: 0

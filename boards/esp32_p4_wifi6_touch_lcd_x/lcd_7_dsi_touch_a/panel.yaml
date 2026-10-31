@@ -1,0 +1,41 @@
+version: 1.0.0
+# Waveshare 7-DSI-TOUCH-A: ILI9881C, 720x1280, 2-lane MIPI DSI, GT911 touch.
+peripherals:
+  - name: dsi_display
+    config:
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1000
+devices:
+  - name: display_lcd
+    chip: ili9881c
+    dependencies:
+      espressif/esp_lcd_ili9881c: "^1.1.0"
+    config:
+      reset_gpio_num: 27
+      rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+      bits_per_pixel: 16
+      reset_active_high: 0
+      dpi_config:
+        dpi_clk_src: MIPI_DSI_DPI_CLK_SRC_DEFAULT
+        dpi_clock_freq_mhz: 80
+        pixel_format: LCD_COLOR_PIXEL_FORMAT_RGB565
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 3
+        flags:
+          use_dma2d: true
+        video_timing:
+          h_size: 720
+          v_size: 1280
+          hsync_back_porch: 239
+          hsync_pulse_width: 50
+          hsync_front_porch: 33
+          vsync_back_porch: 20
+          vsync_pulse_width: 30
+          vsync_front_porch: 2
+  - name: lcd_touch
+    config:
+      touch_config:
+        x_max: 720
+        y_max: 1280

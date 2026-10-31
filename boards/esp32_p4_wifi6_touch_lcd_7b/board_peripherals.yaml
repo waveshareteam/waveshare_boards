@@ -1,0 +1,101 @@
+# Peripherals Configuration
+peripherals:
+  - name: gpio_sd_power
+    type: gpio
+    version: 1.0.0
+    config:
+      pin: 45
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      pull_down: false
+      intr_type: GPIO_INTR_DISABLE
+      default_level: 0
+
+  - name: i2c_master
+    type: i2c
+    version: 1.0.0
+    config:
+      port: 0
+      clk_source: I2C_CLK_SRC_DEFAULT
+      pins:
+        sda: 7
+        scl: 8
+      enable_internal_pullup: true
+      glitch_count: 7
+      intr_priority: 1
+
+  - name: i2s_audio_out
+    type: i2s
+    version: 1.0.0
+    role: master
+    format: tdm-out
+    config: &i2s_config
+      port: 1
+      sample_rate_hz: 24000
+      mclk_multiple: 256
+      data_bit_width: 16
+      slot_mode: I2S_SLOT_MODE_STEREO
+      ws_width: 16
+      total_slot: 2
+      slot_mask: I2S_TDM_SLOT0 | I2S_TDM_SLOT1
+      pins:
+        mclk: 13
+        bclk: 12
+        ws: 10
+        dout: 9
+        din: 11
+
+  - name: i2s_audio_in
+    type: i2s
+    version: 1.0.0
+    role: master
+    format: tdm-in
+    config:
+      <<: *i2s_config
+      total_slot: 4
+      slot_mask: I2S_TDM_SLOT0 | I2S_TDM_SLOT1 | I2S_TDM_SLOT2 | I2S_TDM_SLOT3
+
+  - name: gpio_pa_control
+    type: gpio
+    version: 1.0.0
+    config:
+      pin: 53
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      pull_down: false
+      intr_type: GPIO_INTR_DISABLE
+      default_level: 0
+
+  - name: ldo_mipi
+    type: ldo
+    version: 1.0.0
+    config:
+      chan_id: 3
+      voltage_mv: 2500
+      adjustable: 1
+      owned_by_hw: 0
+
+  - name: dsi_display
+    type: dsi
+    version: 1.0.0
+    config:
+      bus_id: 0
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1000
+      flags:
+        clock_lane_force_hs: false
+
+  - name: ledc_backlight
+    type: ledc
+    version: 1.0.0
+    config:
+      gpio_num: 32
+      channel: LEDC_CHANNEL_1
+      timer_sel: LEDC_TIMER_1
+      freq_hz: 5000
+      duty: 0
+      duty_resolution: LEDC_TIMER_10_BIT
+      speed_mode: LEDC_LOW_SPEED_MODE
+      output_invert: true
+      sleep_mode: LEDC_SLEEP_MODE_NO_ALIVE_NO_PD

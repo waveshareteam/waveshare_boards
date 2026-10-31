@@ -1,0 +1,5 @@
+version: "1.0"
+description: Waveshare 8-DSI-TOUCH-A
+apply:
+  - panel.yaml
+  - lcd_mipi_dsi.c
