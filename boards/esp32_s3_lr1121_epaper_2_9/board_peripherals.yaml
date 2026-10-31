@@ -1,0 +1,43 @@
+# Pin map migrated from the existing examples and board support implementation.
+peripherals:
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 0
+      pins:
+        sda: 13
+        scl: 14
+      enable_internal_pullup: true
+      glitch_count: 7
+
+  - name: spi_shared
+    type: spi
+    role: master
+    config:
+      spi_bus_config:
+        spi_port: SPI2_HOST
+        mosi_io_num: 45
+        miso_io_num: 46
+        sclk_io_num: 40
+        quadwp_io_num: -1
+        quadhd_io_num: -1
+        max_transfer_sz: 4096
+
+  - name: gpio_boot
+    type: gpio
+    role: io
+    config:
+      pin: 0
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      pull_down: false
+      default_level: 1
+
+  - name: gpio_epaper_power
+    type: gpio
+    role: io
+    config:
+      pin: 38
+      mode: GPIO_MODE_OUTPUT
+      default_level: 1

@@ -9,6 +9,8 @@
 
 ```text
 boards/
+  esp32_s31_touch_lcd_4_3c/
+  esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
   esp32_s3_touch_lcd_7/
   esp32_s3_touch_amoled_1_75c/
@@ -27,6 +29,85 @@ boards/
 托管安装与覆盖依赖从包根目录开始扫描，但仓库结构也必须兼容本地克隆。
 `_boards` 后缀能够通过该版本对覆盖依赖名称的筛选，无需修改上级组件或传入 customer-path 参数。
 依据见固定版本的[扫描实现](https://github.com/espressif/esp-board-manager/blob/2beb9b22b0892b343bd555a1ebc9929a7edce8fc/generators/config_generator.py)。
+
+## S31 Touch LCD 4.3C 定义范围
+
+`esp32_s31_touch_lcd_4_3c` 使用 **ESP32-S31（`esp32s31`）**，与 ESP32-S3 不同。
+配置包含 800 × 480 RGB565 显示与两个 PSRAM 帧缓冲、GT911 触摸、
+默认 60% 的 LEDC 背光、低电平供电使能的四线 SDMMC、ES8389 音频输入输出、
+RS485，以及自定义 RTC、IMU、电量计和 CAN-FD 设备。
+随板提供的 `setup_device.c` 校验 Board Manager 选出的 GT911 地址，再调用托管触摸驱动。
+
+声明的接线与产品[硬件说明](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/HARDWARE_REFERENCE_ZH.md)一致，
+进一步核对可参考 [S31 原理图](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/hardware/schematics/ESP32-S31-Touch-LCD-4.3C-Schematics.pdf)。
+这不代表已完成完整原理图审计或本次导入配置的实机测试。
+
+| 接口 | 配置的 GPIO / 参数 |
+| --- | --- |
+| I2C0 | SDA 0、SCL 1 |
+| RGB 显示 | D0–D15：8–19、33–36；PCLK 40，26 MHz；DE 43、HSYNC 44、VSYNC 45 |
+| 触摸 / 背光 | GT911 复位 46、中断 2；背光 47，5 kHz |
+| SDMMC | CLK 24、CMD 25、D0–D3：20–23；电源使能 56，低电平有效 |
+| I2S0 / 功放 | BCLK 37、WS 38、DOUT 39、DIN 42；功放使能 57 |
+| RS485 | UART1 TX 6、RX 7、RTS/DE 61；115200 波特率，半双工 |
+| CAN-FD | TX 4、RX 5；仲裁速率 500 kbit/s，数据速率 2 Mbit/s |
+| RTC / IMU / 电量计 | PCF85063ATL `0x51`，IRQ 3；QMI8658 `0x6B`/`0x6A`，IRQ 54；BQ27220 `0x55` |
+
+上表传感器地址为 7 位地址。GT911 的 7 位地址为 `0x5D`/`0x14`，
+ES8389 为 `0x10`；YAML 使用 Board Manager 的 8 位表示 `0xBA`/`0x28` 和 `0x20`。
+音频默认 48 kHz、16 位立体声，软件未配置外部 MCLK，不能据此推断硬件没有 MCLK 网络。
+电池设计容量 650 mAh 是软件默认值。
+
+显示、触摸、背光、SD 供电/挂载和音频没有跳过初始化。
+未插 SD 卡可能导致自动板卡初始化失败；挂载失败不会自动格式化。
+应用需为显示帧缓冲配置 PSRAM，此目录没有附带板级 sdkconfig 默认文件。
+`rtc_pcf85063`、`imu_qmi8658`、`bat_bq27220` 和 `canfd` 设置了
+`init_skip: true`；通过 Board Manager 使用这些自定义设备时，
+需由应用提供适配代码并显式初始化。RS485 声明描述 UART，此处没有定义 USB 设备或主机栈初始化。
+
+产品的[工具链配置](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json)固定使用
+ESP-IDF `6.2.0-dev-08e0d30a74ad`（提交
+`08e0d30a74ad0bfd5a34933142b80f45619ee410`）、Board Manager `0.7.5`、
+Component Manager `3.1.2` 和 codec `2.0.0-beta5`。
+这些是产品工程的参考版本，不代表本组件包已完成同样验证。
+当前 IDF 5.5.5/6.1 CI 尚不能作为 S31 的有效编译矩阵，详见 [CI 限制](CI_ZH.md#esp32-s31-覆盖缺口)。
+
+## LR1121 ePaper 2.9 定义范围
+
+`esp32_s3_lr1121_epaper_2_9` 导入产品原有示例板卡配置中的三份 YAML。
+已公开的[产品示例](https://github.com/waveshareteam/ESP32-S3-LR1121-ePaper-2.9/blob/4aa6c326ca3a23317b180c86bbaea15d3327386f/examples/esp-idf/README.md#board-manager-integration)
+通过 `waveshare/waveshare_boards` 使用此配置。配置描述 ESP32-S3、兼容 SSD16xx 的
+2.9 英寸电子纸、LR1121 无线、PCF85063A RTC、AXP2602 电量计、一颗 WS2812 状态灯和显示电源控制。
+
+下列数值是配置参考，不代表已经完成原理图核对：
+
+| 接口 | 配置的 GPIO / 参数 |
+| --- | --- |
+| I2C | SDA 13、SCL 14；RTC 地址 `0x51`，电量计地址 `0x62` |
+| 共用 SPI2 | SCLK 40、MOSI 45、MISO 46；显示 10 MHz，无线 8 MHz |
+| 电子纸 | BUSY 8、复位 9、DC 17、CS 18；电源 GPIO38，高电平有效 |
+| LR1121 | DIO1 6、NSS 42、复位 39、BUSY 41 |
+| 其他 | RTC 中断 7；WS2812 GPIO21，一颗 GRB 灯；BOOT 输入 GPIO0 |
+
+`status_led` 使用 Board Manager 原生 RMT `led_strip` 设备。
+它与四个自定义设备（`epaper_ssd16xx`、`rtc_pcf85063a`、`bat_axp2602`、
+`radio_lr1121`）均保留 `init_skip: true`，需要显式初始化。
+自定义设备还需要应用提供并注册初始化/反初始化适配代码及驱动依赖，
+本组件包未包含这些代码；仅有 YAML 不会实现显示刷新或无线通信。
+电子纸与无线共用 `spi_shared`，分别使用独立片选。
+
+`epaper_power_ctrl` 使用原生 GPIO 电源控制设备，**没有**跳过初始化，
+其 GPIO38 默认输出高电平；显示设备通过 `power_ctrl_device` 引用它。
+应用启动和休眠时需考虑这一电源行为。BOOT 仅声明为 GPIO，未定义按键设备或 SD 卡设备。
+AXP2602 的 10 mΩ 采样电阻值是配置默认值，仍需核对实装硬件。
+
+产品仓库已公开[硬件说明](https://github.com/waveshareteam/ESP32-S3-LR1121-ePaper-2.9/blob/4aa6c326ca3a23317b180c86bbaea15d3327386f/docs/hardware-facts.zh-CN.md)
+和 [Rev1.1 原理图](https://github.com/waveshareteam/ESP32-S3-LR1121-ePaper-2.9/blob/4aa6c326ca3a23317b180c86bbaea15d3327386f/hardware/schematics/ESP32-S3-LR1121-ePaper-2.9-XF-Schematics.pdf)。
+上述 GPIO 分配与硬件说明一致；本次导入未完成完整原理图审计或实机验证，
+具体 PCB 版本、显示/供电时序、无线配置及电量测量仍需分别验证。
+虽然设备名为 `epaper_power_ctrl`，GPIO38 实际控制电子纸、无线、WS2812 和 microSD 的共用电源域。
+README 使用已发布的[产品图片](https://raw.githubusercontent.com/waveshareteam/ESP32-S3-LR1121-ePaper-2.9/4aa6c326ca3a23317b180c86bbaea15d3327386f/docs/images/ESP32-S3-LR1121-ePaper-2.9-details-5-2.webp)，
+固定到产品仓库提交 `4aa6c326ca3a23317b180c86bbaea15d3327386f`。
 
 ## LR1121 OLED 1.54 XF 定义范围
 

@@ -1,0 +1,82 @@
+devices:
+  - name: status_led
+    chip: ws2812
+    type: led_strip
+    sub_type: rmt
+    version: 1.0.0
+    init_skip: true
+    config:
+      strip_gpio_num: 21
+      max_leds: 1
+      led_model: LED_MODEL_WS2812
+      color_component_format: LED_STRIP_COLOR_COMPONENT_FMT_GRB
+      invert_out: false
+      rmt:
+        clk_src: RMT_CLK_SRC_DEFAULT
+        resolution_hz: 10000000
+        mem_block_symbols: 0
+        with_dma: false
+
+  - name: epaper_power_ctrl
+    type: power_ctrl
+    sub_type: gpio
+    version: 1.0.0
+    peripherals:
+      - name: gpio_epaper_power
+        active_level: 1
+
+  - name: epaper_ssd16xx
+    chip: ssd16xx_290
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    power_ctrl_device: epaper_power_ctrl
+    config:
+      busy_gpio: 8
+      reset_gpio: 9
+      dc_gpio: 17
+      cs_gpio: 18
+      spi_speed_hz: 10000000
+    peripherals:
+      - name: spi_shared
+
+  - name: rtc_pcf85063a
+    chip: pcf85063a
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x51
+      frequency: 400000
+      int_gpio: 7
+    peripherals:
+      - name: i2c_master
+
+  - name: bat_axp2602
+    chip: axp2602
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x62
+      frequency: 400000
+      sense_resistor_mohm: 10
+      idle_current_threshold_ma: 1
+    peripherals:
+      - name: i2c_master
+
+  - name: radio_lr1121
+    chip: lr1121
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      dio1_gpio: 6
+      nss_gpio: 42
+      reset_gpio: 39
+      busy_gpio: 41
+      dio7_gpio: -1
+      dio8_gpio: -1
+      spi_speed_hz: 8000000
+    peripherals:
+      - name: spi_shared

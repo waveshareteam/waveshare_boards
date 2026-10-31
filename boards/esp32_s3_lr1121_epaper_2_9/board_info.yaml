@@ -1,0 +1,5 @@
+board: esp32_s3_lr1121_epaper_2_9
+chip: esp32s3
+version: 1.0.0
+description: "Waveshare ESP32-S3-LR1121-ePaper-2.9"
+manufacturer: "Waveshare"

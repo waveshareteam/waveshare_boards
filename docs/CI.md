@@ -15,8 +15,10 @@ published versions satisfying the range are tested, with duplicates removed.
 Registry lookup failures fail the job. Each matrix entry records an exact version.
 
 The initial Board Manager floor is **0.7.2**, matching the reference board-pack
-template. Five board profiles are discovered. Each resolved Board Manager version
-adds ten builds across the two IDF lines. Keep the floor until a deliberate
+template. Seven board profiles are discovered: six ESP32-S3 boards and one ESP32-S31
+board. The six S3 profiles contribute twelve builds per resolved Board Manager
+version across the two IDF lines. S31 requires separate target/version handling
+as described below. Keep the floor until a deliberate
 compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
 not counted as successful builds.
 
@@ -33,6 +35,31 @@ test uses the override form and invokes discovery without `-c`.
 Use `boards/<full_model>/` inside the pack: local scanning begins at the
 application's `components/` root, so adding another chip directory exceeds its
 three-level search limit. See [layout and source evidence](BOARDS.md).
+
+## ESP32-S31 coverage gap
+
+The current matrix generator applies both configured IDF versions to every
+selected board. A full matrix therefore emits fourteen entries per Board Manager
+version, including two S31 entries that must not be counted as validated support:
+
+| IDF version | ESP32-S31 status |
+| --- | --- |
+| v5.5.5 | Not present in the official supported or preview target lists |
+| v6.1 | Listed only in `PREVIEW_TARGETS`, not `SUPPORTED_TARGETS`; this workflow does not enable preview targets |
+
+Sources: [v5.5.5 target lists](https://github.com/espressif/esp-idf/blob/v5.5.5/tools/idf_py_actions/constants.py)
+and [v6.1 target lists](https://github.com/espressif/esp-idf/blob/v6.1/tools/idf_py_actions/constants.py).
+The product uses a pinned 6.2 development toolchain; see
+[its configuration](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json).
+Neither that toolchain nor a preview-target job has been added to this pack's CI.
+The Board Manager 0.7.2 floor is also unverified for the S31 profile; the product
+configuration uses 0.7.5.
+
+Before submitting or releasing the S31 addition, adapt matrix selection to actual
+target support and validate a deliberately selected S31 toolchain. A development
+or preview job must be pinned and labeled experimental. Until then, repository
+metadata/documentation/packaging checks may pass while selected S31 builds fail;
+they do not establish S31 compile compatibility.
 
 ## Change routing
 
