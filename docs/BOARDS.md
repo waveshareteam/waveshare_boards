@@ -9,6 +9,7 @@ is `waveshare/waveshare_boards`. Keep all definitions in:
 
 ```text
 boards/
+  esp32_s31_touch_lcd_4_3c/
   esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
   esp32_s3_touch_lcd_7/
@@ -31,6 +32,55 @@ but the layout must also work for local clones. The underscore suffix `_boards`
 passes this version's override-dependency name filter. No upstream patch or
 customer-path argument is needed. See the pinned
 [discovery implementation](https://github.com/espressif/esp-board-manager/blob/2beb9b22b0892b343bd555a1ebc9929a7edce8fc/generators/config_generator.py).
+
+## S31 Touch LCD 4.3C definition scope
+
+`esp32_s31_touch_lcd_4_3c` targets **ESP32-S31 (`esp32s31`)**, not ESP32-S3.
+It defines an 800 × 480 RGB565 display with two PSRAM frame buffers, GT911 touch,
+LEDC backlight (60% default), 4-bit SDMMC with active-low card power, ES8389
+audio input/output, RS485 and custom RTC, IMU, battery-gauge and CAN-FD devices.
+The included `setup_device.c` validates the selected GT911 address before
+calling the managed touch driver.
+
+The declared connections agree with the product's
+[hardware reference](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/HARDWARE_REFERENCE.md);
+the [S31 schematic](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/hardware/schematics/ESP32-S31-Touch-LCD-4.3C-Schematics.pdf)
+is available for further review. This is not a full schematic audit or a
+physical-board test of this import.
+
+| Interface | Configured GPIOs / parameters |
+| --- | --- |
+| I2C0 | SDA 0, SCL 1 |
+| RGB display | D0–D15: 8–19, 33–36; PCLK 40 at 26 MHz; DE 43, HSYNC 44, VSYNC 45 |
+| Touch / backlight | GT911 reset 46, interrupt 2; backlight 47 at 5 kHz |
+| SDMMC | CLK 24, CMD 25, D0–D3: 20–23; power enable 56, active low |
+| I2S0 / amplifier | BCLK 37, WS 38, DOUT 39, DIN 42; amplifier enable 57 |
+| RS485 | UART1 TX 6, RX 7, RTS/DE 61; 115200 baud, half-duplex |
+| CAN-FD | TX 4, RX 5; 500 kbit/s arbitration, 2 Mbit/s data |
+| RTC / IMU / battery | PCF85063ATL `0x51`, IRQ 3; QMI8658 `0x6B`/`0x6A`, IRQ 54; BQ27220 `0x55` |
+
+The sensor addresses above are 7-bit. GT911 uses 7-bit `0x5D`/`0x14`, and
+ES8389 uses `0x10`; their YAML entries use the Board Manager 8-bit forms
+`0xBA`/`0x28` and `0x20`. Audio defaults to 48 kHz, 16-bit stereo with
+no external MCLK configured; this does not prove the hardware lacks an MCLK net.
+The battery design capacity of 650 mAh is a software default.
+
+Display, touch, backlight, SD power/mount and audio do not skip initialization.
+In particular, an absent SD card can make automatic board initialization fail;
+mount failure never automatically formats the card. Applications must configure
+PSRAM for the display frame buffers. No board-specific sdkconfig defaults are
+included here. `rtc_pcf85063`, `imu_qmi8658`, `bat_bq27220` and `canfd`
+use `init_skip: true`; using these custom devices through Board Manager requires
+application-supplied adapters and explicit initialization. The RS485 entry
+describes a UART, and no USB device or host-stack initialization is defined here.
+
+The product's [toolchain configuration](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json)
+pins ESP-IDF `6.2.0-dev-08e0d30a74ad` (commit
+`08e0d30a74ad0bfd5a34933142b80f45619ee410`), Board Manager `0.7.5`,
+Component Manager `3.1.2` and codec `2.0.0-beta5`.
+These are product-side references, not new validation results for this pack.
+The existing IDF 5.5.5/6.1 CI matrix is not an established S31 build matrix;
+see [CI limitations](CI.md#esp32-s31-coverage-gap).
 
 ## LR1121 ePaper 2.9 definition scope
 

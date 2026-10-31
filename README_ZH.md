@@ -91,6 +91,17 @@
       <a href="boards/esp32_s3_lr1121_epaper_2_9/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S3-LR1121-ePaper-2.9">产品文档</a>
     </td>
   </tr>
+  <tr>
+    <td align="center" valign="middle" width="180">
+      <a href="https://docs.waveshare.com/ESP32-S31-Touch-LCD-4.3C">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/8007c28a43f19fea878a61df5ad34ee61cecb5e4/docs/images/Product-1.webp" alt="ESP32-S31-Touch-LCD-4.3C 开发板产品图" width="160">
+      </a>
+    </td>
+    <td valign="middle" width="600">
+      <p><strong>ESP32-S31-Touch-LCD-4.3C</strong></p>
+      <a href="boards/esp32_s31_touch_lcd_4_3c/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-S31-Touch-LCD-4.3C">产品文档</a>
+    </td>
+  </tr>
 </table>
 
 <details>
@@ -102,6 +113,7 @@
 <!-- BEGIN SUPPORTED_BOARDS -->
 | 开发板 | 芯片 | 设备定义 | 外设定义 |
 | --- | --- | --- | --- |
+| [`esp32_s31_touch_lcd_4_3c`](boards/esp32_s31_touch_lcd_4_3c/) | ESP32-S31 | `display_lcd`, `lcd_touch`, `lcd_brightness`, `sdcard_power_ctrl`, `fs_sdcard`, `audio_dac`, `audio_adc`, `rtc_pcf85063`, `imu_qmi8658`, `bat_bq27220`, `canfd` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `ledc_backlight`, `gpio_sd_power`, `gpio_power_amp`, `uart_rs485` |
 | [`esp32_s3_lr1121_epaper_2_9`](boards/esp32_s3_lr1121_epaper_2_9/) | ESP32-S3 | `status_led`, `epaper_power_ctrl`, `epaper_ssd16xx`, `rtc_pcf85063a`, `bat_axp2602`, `radio_lr1121` | `i2c_master`, `spi_shared`, `gpio_boot`, `gpio_epaper_power` |
 | [`esp32_s3_lr1121_oled_1_54_xf`](boards/esp32_s3_lr1121_oled_1_54_xf/) | ESP32-S3 | `button_boot`, `button_power`, `button_menu`, `button_ptt`, `button_rtc_irq`, `radio`, `oled`, `rtc`, `battery`, `audio`, `sdcard` | `i2c_main`, `spi_radio`, `gpio_boot`, `gpio_power`, `gpio_menu`, `gpio_ptt`, `gpio_rtc_irq`, `gpio_amplifier`, `gpio_radio_cs`, `gpio_radio_irq`, `gpio_radio_reset`, `gpio_radio_busy`, `i2s_speaker`, `i2s_microphone` |
 | [`esp32_s3_touch_amoled_1_75c`](boards/esp32_s3_touch_amoled_1_75c/) | ESP32-S3 | `axp2101_power_manager`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `spi_display` |
@@ -120,6 +132,9 @@ LR1121 OLED XF 配置提供硬件定义，自定义设备需要应用侧适配�
 
 LR1121 ePaper 2.9 配置包含电子纸、无线、RTC、电量计和状态灯定义，
 自定义设备需要应用侧适配代码，详见[支持范围](docs/BOARDS_ZH.md#lr1121-epaper-29-定义范围)。
+
+ESP32-S31-Touch-LCD-4.3C 使用 `esp32s31` 目标，不能套用下方 ESP32-S3 的快速开始命令。
+其预览/开发版工具链要求、设备初始化和当前 CI 限制见[板卡说明](docs/BOARDS_ZH.md#s31-touch-lcd-43c-定义范围)。
 
 <a id="quick-start"></a>
 
