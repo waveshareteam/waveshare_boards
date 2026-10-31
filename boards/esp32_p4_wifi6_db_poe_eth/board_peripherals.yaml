@@ -1,0 +1,90 @@
+version: 1.0.0
+peripherals:
+  # Shared I2C bus used by the JD9365 board control path and GT911 touch.
+  # GPIO7/8 are inferred from the JD9365 component currently in use.
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 1
+      pins:
+        sda: 7
+        scl: 8
+
+  # I2S full-duplex audio interface for ES8311.
+  - name: i2s_audio_out
+    type: i2s
+    format: "std-out"
+    role: master
+    config: &i2s_config
+      port: 0
+      sample_rate_hz: 48000
+      mclk_multiple: 256
+      data_bit_width: 16
+      slot_mode: "I2S_SLOT_MODE_STEREO"
+      ws_width: 16
+      pins:
+        mclk: 13
+        bclk: 12
+        ws: 10
+        dout: 9
+        din: 11
+
+  - name: i2s_audio_in
+    type: i2s
+    format: "std-in"
+    role: slave
+    config: *i2s_config
+
+  # ES8311 power amplifier enable.
+  - name: gpio_pa_control
+    type: gpio
+    role: io
+    config:
+      pin: 53
+      mode: GPIO_MODE_OUTPUT
+      default_level: 0
+
+  # MicroSD card power switch Q1 gate.
+  - name: gpio_sd_power
+    type: gpio
+    role: io
+    config:
+      pin: 45
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      default_level: 0
+
+  - name: ldo_mipi
+    type: ldo
+    config:
+      chan_id: 3
+      voltage_mv: 2500
+      adjustable: 1
+      owned_by_hw: 0
+
+  - name: dsi_display
+    type: dsi
+    config:
+      bus_id: 0
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1500
+
+  # ----------------------------------------------------------------------
+  # Not modeled here: ESP32-C5 Hosted Wi-Fi SDIO wiring.
+  #
+  # esp-board-manager has no Wi-Fi/hosted-SDIO device or peripheral type, so
+  # this interface is not declared. Recorded for reference:
+  #   SDIO CLK   GPIO18
+  #   SDIO CMD   GPIO19
+  #   SDIO D0    GPIO14
+  #   SDIO D1    GPIO15
+  #   SDIO D2    GPIO16
+  #   SDIO D3    GPIO17
+  #   C5 RESET   GPIO54 (active low)
+  #   SDIO slot  1 (the SD card in fs_sdcard above uses slot 0)
+  # An application configures the hosted transport directly against these
+  # GPIOs (esp_wifi_remote / SDIO hosted driver), independent of Board
+  # Manager.
+  # ----------------------------------------------------------------------

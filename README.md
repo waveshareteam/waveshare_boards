@@ -28,30 +28,32 @@ bilingual documentation, and generation/build checks.
 
 <table>
   <tr>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.75C/6d19f7e16fb9a3be219e9eed43ca9eb56c88d01c/docs/images/esp32-s3-touch-amoled-1.75c.jpg" alt="ESP32-S3-Touch-AMOLED-1.75C development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.75C/6d19f7e16fb9a3be219e9eed43ca9eb56c88d01c/docs/images/esp32-s3-touch-amoled-1.75c.jpg" alt="ESP32-S3-Touch-AMOLED-1.75C development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-S3-Touch-AMOLED-1.75C</strong></p>
       <a href="boards/esp32_s3_touch_amoled_1_75c/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.75C">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/7ab8f957e22ea1ab811256359f4eddcaaf49ee91/assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="ESP32-S3-Touch-AMOLED-1.8 development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/7ab8f957e22ea1ab811256359f4eddcaaf49ee91/assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="ESP32-S3-Touch-AMOLED-1.8 development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-S3-Touch-AMOLED-1.8</strong></p>
       <a href="boards/esp32_s3_touch_amoled_1_8/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-2.16/225a62bff11b5d0a0b607873860d39485a9a9685/docs/assets/ESP32-S3-Touch-AMOLED-2.16-details-1.jpg" alt="ESP32-S3-Touch-AMOLED-2.16 development board" width="90"></a></td>
-    <td valign="middle" width="230">
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-AMOLED-2.16/225a62bff11b5d0a0b607873860d39485a9a9685/docs/assets/ESP32-S3-Touch-AMOLED-2.16-details-1.jpg" alt="ESP32-S3-Touch-AMOLED-2.16 development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-S3-Touch-AMOLED-2.16</strong></p>
       <a href="boards/esp32_s3_touch_amoled_2_16/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16">Product documentation</a>
     </td>
-  </tr>
-  <tr>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-LCD-7/bc51a84b30c0cea018fee6e0d7427ec10102060e/assets/Product-1.webp" alt="ESP32-S3-Touch-LCD-7 development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S3-Touch-LCD-7/bc51a84b30c0cea018fee6e0d7427ec10102060e/assets/Product-1.webp" alt="ESP32-S3-Touch-LCD-7 development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-S3-Touch-LCD-7</strong></p>
       <a href="boards/esp32_s3_touch_lcd_7/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-Touch-LCD-7">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-S3-LR1121-OLED-1.54"><img src="https://raw.githubusercontent.com/waveshareteam/esp32-s3-lr1121-oled-1.54/main/assets/ESP32-S3-LR1121-OLED-1.54-DocHeader-1.webp" alt="ESP32-S3-LR1121-OLED-1.54-XF development board" width="90"></a></td>
-    <td valign="middle" width="230">
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-S3-LR1121-OLED-1.54"><img src="https://raw.githubusercontent.com/waveshareteam/esp32-s3-lr1121-oled-1.54/main/assets/ESP32-S3-LR1121-OLED-1.54-DocHeader-1.webp" alt="ESP32-S3-LR1121-OLED-1.54-XF development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-S3-LR1121-OLED-1.54-XF</strong></p>
       <a href="boards/esp32_s3_lr1121_oled_1_54_xf/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-LR1121-OLED-1.54">Product documentation</a>
     </td>
@@ -62,59 +64,61 @@ bilingual documentation, and generation/build checks.
 
 <table>
   <tr>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-NANO-WIFI6-DB"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-NANO-WIFI6-DB/ESP32-P4-NANO-WIFI6-DB-details-1.jpg" alt="ESP32-P4-NANO-WIFI6-DB development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-NANO-WIFI6-DB"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-NANO-WIFI6-DB/ESP32-P4-NANO-WIFI6-DB-details-1.jpg" alt="ESP32-P4-NANO-WIFI6-DB development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-NANO-WIFI6-DB</strong></p>
       <a href="boards/esp32_p4_nano_wifi6_db/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-NANO-WIFI6-DB">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-DB"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-WIFI6-DB/ESP32-P4-WIFI6-DB-details-1.jpg" alt="ESP32-P4-WIFI6-DB development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-DB"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-WIFI6-DB/ESP32-P4-WIFI6-DB-details-1.jpg" alt="ESP32-P4-WIFI6-DB development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-DB</strong></p>
       <a href="boards/esp32_p4_wifi6_db/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-DB">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-NANO"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-NANO/ESP32-P4-NANO-details-1.jpg" alt="ESP32-P4-NANO development board" width="90"></a></td>
-    <td valign="middle" width="230">
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-NANO"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-NANO/ESP32-P4-NANO-details-1.jpg" alt="ESP32-P4-NANO development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-NANO</strong></p>
       <a href="boards/esp32_p4_nano/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-NANO">Product documentation</a>
     </td>
-  </tr>
-  <tr>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-WIFI6/ESP32-P4-WIFI6-details-1.jpg" alt="ESP32-P4-WIFI6 development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-WIFI6/ESP32-P4-WIFI6-details-1.jpg" alt="ESP32-P4-WIFI6 development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6</strong></p>
       <a href="boards/esp32_p4_wifi6/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-4B/main/docs/assets/esp32-p4-wifi6-touch-lcd-4b.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-4B development board" width="90"></a></td>
-    <td valign="middle" width="230">
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-4B/main/docs/assets/esp32-p4-wifi6-touch-lcd-4b.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-4B development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-4B</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_4b/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-7B/main/assets/ESP32-P4-WIFI6-Touch-LCD-7B-details-1.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-7B development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-7B/main/assets/ESP32-P4-WIFI6-Touch-LCD-7B-details-1.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-7B development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-7B</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_7b/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B">Product documentation</a>
     </td>
   </tr>
   <tr>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-3.5"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-3.5/870588e62daaf723f3c52f0060d8dc053665ed30/assets/ESP32-P4-WIFI6-Touch-LCD-3.5-details-1.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-3.5 development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-3.5"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-3.5/870588e62daaf723f3c52f0060d8dc053665ed30/assets/ESP32-P4-WIFI6-Touch-LCD-3.5-details-1.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-3.5 development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-3.5</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_3_5/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-3.5">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4.3"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-WIFI6-Touch-LCD-4.3/ESP32-P4-WIFI6-Touch-LCD-4.3-1.jpg?v=26020602" alt="ESP32-P4-WIFI6-Touch-LCD-4.3 development board" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4.3"><img src="https://www.waveshare.net/photo/development-board/ESP32-P4-WIFI6-Touch-LCD-4.3/ESP32-P4-WIFI6-Touch-LCD-4.3-1.jpg?v=26020602" alt="ESP32-P4-WIFI6-Touch-LCD-4.3 development board" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-4.3</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_4_3/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4.3">Product documentation</a>
     </td>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-X"><img src="https://github.com/ycorez/ESP32-P4-WIFI6-Touch-LCD-X/raw/main/assets/ESP32-P4-WIFI6-Touch-LCD-X.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-X development boards" width="90"></a></td>
-    <td valign="middle" width="230">
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-X"><img src="https://github.com/ycorez/ESP32-P4-WIFI6-Touch-LCD-X/raw/main/assets/ESP32-P4-WIFI6-Touch-LCD-X.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-X development boards" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-X</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_x/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-X">Product documentation</a>
     </td>
-  </tr>
-  <tr>
-    <td align="center" valign="middle" width="100"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-XC"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-XC/6948676d64515b6273998236d98a643ead640735/assets/ESP32-P4-WIFI6-Touch-LCD-XC.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-XC development boards" width="90"></a></td>
-    <td valign="middle" width="230">
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-XC"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-XC/6948676d64515b6273998236d98a643ead640735/assets/ESP32-P4-WIFI6-Touch-LCD-XC.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-XC development boards" width="140"></a></td>
+    <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-XC</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_xc/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-XC">Product documentation</a>
     </td>
@@ -132,10 +136,11 @@ such as `spi_sd` describe a bus; they do not imply a complete storage applicatio
 <!-- BEGIN SUPPORTED_BOARDS -->
 | Board | Chip | Device definitions | Peripheral definitions |
 | --- | --- | --- | --- |
-| [`esp32_p4_nano`](boards/esp32_p4_nano/) | ESP32-P4 | `audio_dac`, `audio_adc`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
-| [`esp32_p4_nano_wifi6_db`](boards/esp32_p4_nano_wifi6_db/) | ESP32-P4 | `audio_dac`, `audio_adc`, `camera`, `display_lcd`, `sdcard_power_ctrl`, `fs_sdcard`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
-| [`esp32_p4_wifi6`](boards/esp32_p4_wifi6/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
-| [`esp32_p4_wifi6_db`](boards/esp32_p4_wifi6_db/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
+| [`esp32_p4_nano`](boards/esp32_p4_nano/) | ESP32-P4 | `audio_dac`, `audio_adc`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
+| [`esp32_p4_nano_wifi6_db`](boards/esp32_p4_nano_wifi6_db/) | ESP32-P4 | `audio_dac`, `audio_adc`, `camera`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
+| [`esp32_p4_wifi6`](boards/esp32_p4_wifi6/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
+| [`esp32_p4_wifi6_db`](boards/esp32_p4_wifi6_db/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
+| [`esp32_p4_wifi6_db_poe_eth`](boards/esp32_p4_wifi6_db_poe_eth/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_wifi6_touch_lcd_3_5`](boards/esp32_p4_wifi6_touch_lcd_3_5/) | ESP32-P4 | `audio_dac`, `audio_adc`, `fs_spiffs`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `lcd_brightness`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `ldo_mipi`, `spi_lcd`, `ledc_backlight` |
 | [`esp32_p4_wifi6_touch_lcd_4_3`](boards/esp32_p4_wifi6_touch_lcd_4_3/) | ESP32-P4 | `audio_dac`, `audio_adc`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `lcd_brightness`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display`, `ledc_backlight` |
 | [`esp32_p4_wifi6_touch_lcd_4b`](boards/esp32_p4_wifi6_touch_lcd_4b/) | ESP32-P4 | `audio_dac`, `audio_adc`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `lcd_brightness`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display`, `ledc_backlight` |
@@ -215,6 +220,18 @@ idf.py bmgr -b esp32_p4_wifi6_touch_lcd_x -a lcd_7_dsi_touch_a
 
 Re-run the command after changing the board or amendment. Without an amendment,
 `esp32_p4_wifi6_touch_lcd_x` uses its 10.1-inch base configuration.
+
+ESP32-P4 boards with an external MIPI-DSI connector (`esp32_p4_nano`,
+`esp32_p4_nano_wifi6_db`, `esp32_p4_wifi6`, `esp32_p4_wifi6_db`, and
+`esp32_p4_wifi6_db_poe_eth`) can use the shared
+[DSI display overlays](boards/esp32_p4_dsi_overlay/) for `5_dsi_touch_a`,
+`7_dsi_touch_c`, `8_dsi_touch_a`, `10_1_dsi_touch_a`, and `10_1_dsi_touch_b`.
+The overlay path is resolved relative to the selected board directory:
+
+```bash
+idf.py bmgr -b esp32_p4_wifi6_db -a ../esp32_p4_dsi_overlay/7_dsi_touch_c
+```
+
 See the [Board Manager amend guide](https://docs.espressif.com/projects/esp-board-manager/en/latest/create-board/amend.html).
 
 ## 🗂️ Repository layout

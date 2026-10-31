@@ -1,5 +1,5 @@
 board: esp32_p4_nano_wifi6_db
 chip: esp32p4
 version: 1.0.0
-description: "ESP32-P4-NANO-WIFI6-DB Development Board"
+description: "ESP32-P4-NANO-WIFI6-DB"
 manufacturer: "Waveshare"

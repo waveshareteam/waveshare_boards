@@ -1,4 +1,4 @@
-version: "0.1.2"
+version: "0.2.0"
 description: Waveshare board definitions for ESP Board Manager
 license: Apache-2.0
 url: https://github.com/waveshareteam/waveshare_boards

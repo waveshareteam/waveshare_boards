@@ -1,0 +1,6 @@
+config BOARD_LCD_BRIGHTNESS_CUSTOM
+    bool "LCD backlight uses a custom Board Manager device"
+    default y
+    help
+        Indicates that LCD backlight brightness is controlled by the
+        custom lcd_brightness Board Manager device.

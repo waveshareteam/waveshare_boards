@@ -1,0 +1,6 @@
+version: "1.0"
+description: Waveshare 7-DSI-TOUCH-C
+apply:
+  - panel.yaml
+  - lcd_mipi_dsi.c
+  - Kconfig.projbuild

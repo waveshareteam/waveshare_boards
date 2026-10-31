@@ -1,9 +1,34 @@
 #include "esp_board_manager_includes.h"
 
-#if __has_include(<esp_lcd_jd9365.h>)
-#include "esp_lcd_jd9365.h"
+#if __has_include(<esp_lcd_jd9365_10_1.h>)
+#include "esp_lcd_jd9365_10_1.h"
+#include "driver/i2c_master.h"
+#include "esp_log.h"
 
-// 10.1-DSI-TOUCH-A init sequence, the default table of espressif/esp_lcd_jd9365.
+static const char *TAG = "ESP32_P4_WIFI6_LCD";
+
+// The waveshare esp_lcd_jd9365_10_1 driver brings the panel board up over I2C before it
+// creates the DPI panel, through i2c_bus on a hard-coded I2C_NUM_1 / GPIO7 / GPIO8. i2c_bus
+// reuses an existing bus on that port, but creates one itself if there is none and then
+// never releases it, which leaves Board Manager unable to create its i2c_master peripheral.
+//
+// Referencing i2c_master here, before the driver runs, makes Board Manager the one owner of
+// the port and sends i2c_bus down its reuse path. KEEP THIS CALL: without it the panel driver
+// grabs the port and board_display_start() fails with "I2C bus id(1) has already been
+// acquired".
+static void panel_board_claim_i2c_bus(void)
+{
+    i2c_master_bus_handle_t i2c_bus = NULL;
+    esp_err_t ret = esp_board_periph_ref_handle(ESP_BOARD_PERIPH_NAME_I2C_MASTER, (void **)&i2c_bus);
+    if (ret != ESP_OK || i2c_bus == NULL) {
+        ESP_LOGW(TAG, "Could not claim i2c_master before the panel driver: %s", esp_err_to_name(ret));
+        return;
+    }
+    // The reference is kept on purpose, as board_display.c does: later devices must not tear
+    // the bus down.
+}
+
+// 10.1-DSI-TOUCH-A init sequence, passed to the panel driver through jd9365_vendor_config_t.
 static const jd9365_lcd_init_cmd_t lcd_init_cmds[] = {
     {0xE0, (uint8_t[]){0x00}, 1, 0},
     {0xE1, (uint8_t[]){0x93}, 1, 0},
@@ -231,6 +256,8 @@ static const jd9365_lcd_init_cmd_t lcd_init_cmds[] = {
 
 __attribute__((weak)) esp_err_t lcd_dsi_panel_factory_entry_t(esp_lcd_dsi_bus_handle_t dsi_handle, dev_display_lcd_config_t *lcd_cfg, dev_display_lcd_handles_t *lcd_handles)
 {
+    panel_board_claim_i2c_bus();
+
     jd9365_vendor_config_t vendor_config = {
         .init_cmds = lcd_init_cmds,
         .init_cmds_size = sizeof(lcd_init_cmds) / sizeof(lcd_init_cmds[0]),

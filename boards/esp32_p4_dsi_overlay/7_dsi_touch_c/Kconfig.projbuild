@@ -1,0 +1,5 @@
+
+
+config BOARD_DISPLAY_LAYOUT_1024_600
+    bool
+    default y

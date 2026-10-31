@@ -70,7 +70,7 @@ devices:
     sub_type: dsi
     chip: jd9365
     dependencies:
-      espressif/esp_lcd_jd9365: "^2.0.2"
+      waveshare/esp_lcd_jd9365_10_1: "^2.0.0"
     config:
       reset_gpio_num: -1
       rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
@@ -89,6 +89,8 @@ devices:
         out_color_format: LCD_COLOR_FMT_RGB565
         num_fbs: 3
         flags:
+          # The _10_1 driver does not enable DMA2D itself, unlike waveshare/esp_lcd_jd9365,
+          # so Board Manager is the one that has to turn it on.
           use_dma2d: true
         video_timing:
           h_size: 800
@@ -102,6 +104,24 @@ devices:
     peripherals:
       - ldo_name: ldo_mipi
       - dsi_name: dsi_display
+  - name: lcd_brightness
+    type: custom
+    version: 1.0.0
+    config:
+      i2c_address: 0x45
+      brightness_register: 0x96
+      default_percent: 100
+      scl_speed_hz: 100000
+    peripherals:
+      - name: i2c_master
+  # App assets and audio prompts; the image is built from firmware/brookesia/spiffs into "storage".
+  - name: fs_spiffs
+    type: fs_spiffs
+    config:
+      base_path: "/spiffs"
+      partition_label: storage
+      max_files: 5
+      format_if_mount_failed: false
   # GT911 reset/interrupt are not wired to the SoC; the driver probes both addresses instead.
   - name: lcd_touch
     type: lcd_touch

@@ -1,0 +1,33 @@
+version: 1.0.0
+peripherals:
+  - name: dsi_display
+    config:
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 700
+devices:
+  - name: display_lcd
+    chip: hx8394
+    dependencies:
+      waveshare/esp_lcd_hx8394: "*"
+    config:
+      bits_per_pixel: 16
+      dpi_config:
+        dpi_clock_freq_mhz: 58
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 3
+        video_timing:
+          h_size: 720
+          v_size: 1280
+          hsync_back_porch: 20
+          hsync_pulse_width: 20
+          hsync_front_porch: 40
+          vsync_back_porch: 10
+          vsync_pulse_width: 4
+          vsync_front_porch: 24
+  - name: lcd_touch
+    config:
+      touch_config:
+        x_max: 720
+        y_max: 1280
