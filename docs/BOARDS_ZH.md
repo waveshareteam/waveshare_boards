@@ -9,6 +9,7 @@
 
 ```text
 boards/
+  esp32_p4_knob_touch_amoled_1_75/
   esp32_s31_touch_lcd_4_3c/
   esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
@@ -29,6 +30,42 @@ boards/
 托管安装与覆盖依赖从包根目录开始扫描，但仓库结构也必须兼容本地克隆。
 `_boards` 后缀能够通过该版本对覆盖依赖名称的筛选，无需修改上级组件或传入 customer-path 参数。
 依据见固定版本的[扫描实现](https://github.com/espressif/esp-board-manager/blob/2beb9b22b0892b343bd555a1ebc9929a7edce8fc/generators/config_generator.py)。
+
+## P4 Knob Touch AMOLED 1.75 定义范围
+
+`esp32_p4_knob_touch_amoled_1_75` 使用 **ESP32-P4（`esp32p4`）**。配置包含
+466 × 466 CO5300 AMOLED（单通道 MIPI-DSI，480 Mbit/s，RGB565，三个帧缓冲）、CST9217 触摸、
+带功放使能的 ES8389 播放、ES7210 双麦克风采集、microSD、SPIFFS，
+以及旋钮、振动马达、BOOT 键、电源键和 RTC、IMU 中断的 GPIO 声明。
+随板提供的 `setup_device.c` 在 Board Manager 准备好的 DSI 总线上创建 CO5300 面板，并创建 CST9217 触摸驱动。
+两个驱动均为托管依赖，版本与产品一致：`espressif/esp_lcd_co5300` 2.0.2 和
+`waveshare/esp_lcd_touch_cst9217` 2.0.0。
+
+该定义来自产品的 ESP-IDF 示例，产品在 ESP-IDF v6.1 和 Board Manager 0.7.4 上使用；
+移入本组件包时只调整了注释。下表的 GPIO 分配和编解码器地址配置已对照产品原理图核对，原理图不公开。
+这不是完整的原理图审查，也不是本次导入的实机测试。
+
+| 接口 | 配置的 GPIO / 参数 |
+| --- | --- |
+| I2C1 | SDA 7，SCL 8；触摸、编解码器、RTC 和 IMU 共用 |
+| 显示 / 触摸 | CO5300 复位 29；DSI PHY 由 LDO_VO3 供电，2500 mV；CST9217 复位 27，中断 26 |
+| I2S1 | MCLK 13，BCLK 12，WS 10，DOUT 9（ES8389），DIN 11（ES7210）；16 kHz、16 位立体声 |
+| 功放 | 转接板上的使能 53，高电平有效 |
+| microSD | SDMMC 卡槽 0，四线：CLK 43，CMD 44，D0–D3 39–42 |
+| 旋钮 / 振动 | 顺时针 20，逆时针 21（低电平有效，双边沿中断）；DRV8837 IN1 22，IN2 23 |
+| 按键 / 中断 | BOOT 35，电源键 2（低电平有效）；RTC 3；IMU INT1 4，INT2 5 |
+
+ES8389 的 7 位地址为 `0x10`，ES7210 为 `0x40`；YAML 中使用 Board Manager 的 8 位写法 `0x20` 和 `0x80`。
+CST9217 配置为 `0xB4`。
+
+显示、触摸、两个编解码器、功放 GPIO 和 `fs_spiffs` 会自动初始化。`fs_spiffs` 要求应用分区表中有标签为 `storage` 的分区。
+`fs_sdcard` 使用 `init_skip: true` 和 `ldo_chan_id: -1`：其 IO 电源 LDO_VO4 与连接 ESP32-C6 协处理器的 SDIO 链路共用，
+此设备不会申请该电源。应用需在挂载前打开它，例如先启动无线链路。
+`wireless` 是 `init_skip: true` 的自定义设备，适配代码和驱动由应用提供，本组件包不包含。
+`sdkconfig.defaults.board` 选择 QIO 32 MB Flash 和 200 MHz HEX PSRAM，分区表由应用决定。
+
+README 使用本仓库中的产品图
+[`docs/images/esp32-p4-knob-touch-amoled-1.75.jpg`](images/esp32-p4-knob-touch-amoled-1.75.jpg)。
 
 ## S31 Touch LCD 4.3C 定义范围
 

@@ -9,6 +9,7 @@ is `waveshare/waveshare_boards`. Keep all definitions in:
 
 ```text
 boards/
+  esp32_p4_knob_touch_amoled_1_75/
   esp32_s31_touch_lcd_4_3c/
   esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
@@ -32,6 +33,50 @@ but the layout must also work for local clones. The underscore suffix `_boards`
 passes this version's override-dependency name filter. No upstream patch or
 customer-path argument is needed. See the pinned
 [discovery implementation](https://github.com/espressif/esp-board-manager/blob/2beb9b22b0892b343bd555a1ebc9929a7edce8fc/generators/config_generator.py).
+
+## P4 Knob Touch AMOLED 1.75 definition scope
+
+`esp32_p4_knob_touch_amoled_1_75` targets **ESP32-P4 (`esp32p4`)**. It defines a
+466 × 466 CO5300 AMOLED on one MIPI-DSI data lane (480 Mbit/s, RGB565, three
+frame buffers), CST9217 touch, ES8389 playback with an amplifier enable, ES7210
+dual-microphone capture, microSD, SPIFFS, and GPIO declarations for the knob,
+vibration motor, BOOT and power keys, and the RTC and IMU interrupts. The included
+`setup_device.c` creates the CO5300 panel on the DSI bus prepared by Board Manager
+and the CST9217 touch driver. Both drivers are managed dependencies at the versions
+the product uses: `espressif/esp_lcd_co5300` 2.0.2 and
+`waveshare/esp_lcd_touch_cst9217` 2.0.0.
+
+The definition comes from the product's ESP-IDF examples, which use it with
+ESP-IDF v6.1 and Board Manager 0.7.4; only comments were reworded for this pack.
+The GPIO assignments and codec address straps below were checked against the
+product schematic, which is not published. This is not a full schematic audit or
+a physical-board test of this import.
+
+| Interface | Configured GPIOs / parameters |
+| --- | --- |
+| I2C1 | SDA 7, SCL 8; touch, codecs, RTC and IMU share the bus |
+| Display / touch | CO5300 reset 29; DSI PHY supply LDO_VO3 at 2500 mV; CST9217 reset 27, interrupt 26 |
+| I2S1 | MCLK 13, BCLK 12, WS 10, DOUT 9 (ES8389), DIN 11 (ES7210); 16 kHz, 16-bit stereo |
+| Amplifier | Enable 53 on the adapter board, active high |
+| microSD | SDMMC slot 0, 4-bit: CLK 43, CMD 44, D0–D3 39–42 |
+| Knob / vibration | Clockwise 20, counter-clockwise 21 (active low, both edges); DRV8837 IN1 22, IN2 23 |
+| Keys / interrupts | BOOT 35, power 2 (active low); RTC 3; IMU INT1 4, INT2 5 |
+
+ES8389 uses 7-bit `0x10` and ES7210 `0x40`; their YAML entries use the Board
+Manager 8-bit forms `0x20` and `0x80`. CST9217 is configured at `0xB4`.
+
+Display, touch, both codecs, the amplifier GPIO and `fs_spiffs` initialize
+automatically. `fs_spiffs` expects an application partition labelled `storage`.
+`fs_sdcard` uses `init_skip: true` and `ldo_chan_id: -1`: its IO supply, LDO_VO4,
+is shared with the SDIO link to the ESP32-C6 co-processor and is not acquired by
+this device. Applications must enable that supply, for example by starting the
+wireless link, before mounting the card. `wireless` is a custom device with
+`init_skip: true`; applications provide its adapter and driver, which this pack
+does not include. `sdkconfig.defaults.board` selects QIO 32 MB flash and 200 MHz
+HEX PSRAM and leaves the partition table to the application.
+
+The README uses the product image stored at
+[`docs/images/esp32-p4-knob-touch-amoled-1.75.jpg`](images/esp32-p4-knob-touch-amoled-1.75.jpg).
 
 ## S31 Touch LCD 4.3C definition scope
 

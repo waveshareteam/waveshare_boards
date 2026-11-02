@@ -15,11 +15,10 @@ published versions satisfying the range are tested, with duplicates removed.
 Registry lookup failures fail the job. Each matrix entry records an exact version.
 
 The initial Board Manager floor is **0.7.2**, matching the reference board-pack
-template. Seven board profiles are discovered: six ESP32-S3 boards and one ESP32-S31
-board. The six S3 profiles contribute twelve builds per resolved Board Manager
-version across the two IDF lines. S31 requires separate target/version handling
-as described below. Keep the floor until a deliberate
-compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
+template. Eight board profiles are discovered: six ESP32-S3, one ESP32-P4 and one
+ESP32-S31 board. The S3 and P4 profiles build on both IDF lines and S31 on v6.1
+only, as described below, giving fifteen builds per resolved Board Manager version.
+Keep the floor until a deliberate compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
 not counted as successful builds.
 
 For IDF 5.5, Component Manager **2.5.0** is selected because the reference template documents
