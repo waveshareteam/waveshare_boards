@@ -9,14 +9,26 @@ is `waveshare/waveshare_boards`. Keep all definitions in:
 
 ```text
 boards/
+  esp32_p4_dsi_overlay/              DSI display overlays for -a, not a board
   esp32_p4_knob_touch_amoled_1_75/
+  esp32_p4_nano/
+  esp32_p4_nano_wifi6_db/
+  esp32_p4_wifi6/
+  esp32_p4_wifi6_db/
+  esp32_p4_wifi6_db_poe_eth/
+  esp32_p4_wifi6_touch_lcd_3_5/
+  esp32_p4_wifi6_touch_lcd_4_3/
+  esp32_p4_wifi6_touch_lcd_4b/
+  esp32_p4_wifi6_touch_lcd_7b/
+  esp32_p4_wifi6_touch_lcd_x/
+  esp32_p4_wifi6_touch_lcd_xc/
   esp32_s31_touch_lcd_4_3c/
   esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
-  esp32_s3_touch_lcd_7/
   esp32_s3_touch_amoled_1_75c/
   esp32_s3_touch_amoled_1_8/
   esp32_s3_touch_amoled_2_16/
+  esp32_s3_touch_lcd_7/
 ```
 
 Each model keeps `board_info.yaml`, `board_devices.yaml`,
