@@ -70,7 +70,7 @@ ESP-IDF `6.2.0-dev-08e0d30a74ad`（提交
 `08e0d30a74ad0bfd5a34933142b80f45619ee410`）、Board Manager `0.7.5`、
 Component Manager `3.1.2` 和 codec `2.0.0-beta5`。
 这些是产品工程的参考版本，不代表本组件包已完成同样验证。
-当前 IDF 5.5.5/6.1 CI 尚不能作为 S31 的有效编译矩阵，详见 [CI 限制](CI_ZH.md#esp32-s31-覆盖缺口)。
+CI 只在 IDF v6.1 上编译此配置，S31 在该版本中属于预览目标，详见 [CI 覆盖](CI_ZH.md#esp32-s31-覆盖缺口)。
 
 ## LR1121 ePaper 2.9 定义范围
 

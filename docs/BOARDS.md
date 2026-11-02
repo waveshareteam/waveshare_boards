@@ -79,8 +79,8 @@ pins ESP-IDF `6.2.0-dev-08e0d30a74ad` (commit
 `08e0d30a74ad0bfd5a34933142b80f45619ee410`), Board Manager `0.7.5`,
 Component Manager `3.1.2` and codec `2.0.0-beta5`.
 These are product-side references, not new validation results for this pack.
-The existing IDF 5.5.5/6.1 CI matrix is not an established S31 build matrix;
-see [CI limitations](CI.md#esp32-s31-coverage-gap).
+CI builds this profile on IDF v6.1 only, where S31 is a preview target;
+see [CI coverage](CI.md#esp32-s31-coverage-gap).
 
 ## LR1121 ePaper 2.9 definition scope
 

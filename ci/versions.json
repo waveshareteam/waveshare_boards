@@ -3,6 +3,11 @@
     "v5.5.5",
     "v6.1"
   ],
+  "unsupported_targets": {
+    "v5.5.5": [
+      "esp32s31"
+    ]
+  },
   "component_manager": {
     "v5.5.5": "idf-component-manager==2.5.0",
     "v6.1": "idf-component-manager==3.0.3"
