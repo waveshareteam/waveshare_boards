@@ -62,7 +62,8 @@ CST9217 配置为 `0xB4`。
 `fs_sdcard` 使用 `init_skip: true` 和 `ldo_chan_id: -1`：其 IO 电源 LDO_VO4 与连接 ESP32-C6 协处理器的 SDIO 链路共用，
 此设备不会申请该电源。应用需在挂载前打开它，例如先启动无线链路。
 `wireless` 是 `init_skip: true` 的自定义设备，适配代码和驱动由应用提供，本组件包不包含。
-`sdkconfig.defaults.board` 选择 QIO 32 MB Flash 和 200 MHz HEX PSRAM，分区表由应用决定。
+`sdkconfig.defaults.board` 选择 QIO 32 MB Flash 和 200 MHz HEX PSRAM，并把 bootloader 日志级别设为 WARN，
+使 QIO bootloader 能放在默认分区表偏移 `0x8000` 之前。分区表由应用决定。
 
 README 使用本仓库中的产品图
 [`docs/images/esp32-p4-knob-touch-amoled-1.75.jpg`](images/esp32-p4-knob-touch-amoled-1.75.jpg)。

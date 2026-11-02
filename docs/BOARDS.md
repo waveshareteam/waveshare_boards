@@ -73,7 +73,8 @@ this device. Applications must enable that supply, for example by starting the
 wireless link, before mounting the card. `wireless` is a custom device with
 `init_skip: true`; applications provide its adapter and driver, which this pack
 does not include. `sdkconfig.defaults.board` selects QIO 32 MB flash and 200 MHz
-HEX PSRAM and leaves the partition table to the application.
+HEX PSRAM, and a WARN-level bootloader log so the QIO bootloader fits before the
+default partition table at `0x8000`. The partition table is left to the application.
 
 The README uses the product image stored at
 [`docs/images/esp32-p4-knob-touch-amoled-1.75.jpg`](images/esp32-p4-knob-touch-amoled-1.75.jpg).
