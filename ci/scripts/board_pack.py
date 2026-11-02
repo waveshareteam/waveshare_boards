@@ -113,9 +113,13 @@ def registry_versions(root):
 
 def matrix(root, boards, versions):
     config = json.loads((root / "ci/versions.json").read_text(encoding="utf-8"))
+    # Targets an IDF version cannot build, such as a chip it does not know yet.
+    unsupported = config.get("unsupported_targets", {})
     cells = []
     for board in boards:
         for idf in config["idf"]:
+            if board["target"] in unsupported.get(idf, ()):
+                continue
             for version in versions:
                 cells.append(dict(board=board["board"], target=board["target"],
                                   idf=idf, bmgr=version,

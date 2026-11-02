@@ -1,0 +1,10 @@
+# Hardware defaults; applications choose their own partition layout.
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_32MB=y
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+# With QIO flash the INFO-level bootloader exceeds the 0x6000 bytes available
+# before the default partition table offset (0x8000).
+CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y

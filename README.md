@@ -69,17 +69,6 @@ bilingual documentation, and generation/build checks.
       <a href="boards/esp32_s3_lr1121_epaper_2_9/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S3-LR1121-ePaper-2.9">Product documentation</a>
     </td>
   </tr>
-  <tr>
-    <td align="center" valign="middle" width="180">
-      <a href="https://docs.waveshare.com/ESP32-S31-Touch-LCD-4.3C">
-        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/8007c28a43f19fea878a61df5ad34ee61cecb5e4/docs/images/Product-1.webp" alt="ESP32-S31-Touch-LCD-4.3C development board" width="160">
-      </a>
-    </td>
-    <td valign="middle" width="600">
-      <p><strong>ESP32-S31-Touch-LCD-4.3C</strong></p>
-      <a href="boards/esp32_s31_touch_lcd_4_3c/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S31-Touch-LCD-4.3C">Product documentation</a>
-    </td>
-  </tr>
 </table>
 
 ### ESP32-P4
@@ -134,7 +123,7 @@ bilingual documentation, and generation/build checks.
     </td>
   </tr>
   <tr>
-    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-X"><img src="https://github.com/ycorez/ESP32-P4-WIFI6-Touch-LCD-X/raw/main/assets/ESP32-P4-WIFI6-Touch-LCD-X.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-X development boards" width="140"></a></td>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-X"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-X/f15098fe62072156db1e7baf9a0945801f8a8877/assets/ESP32-P4-WIFI6-Touch-LCD-X.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-X development boards" width="140"></a></td>
     <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-X</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_x/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-X">Product documentation</a>
@@ -143,6 +132,29 @@ bilingual documentation, and generation/build checks.
     <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-XC</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_xc/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-XC">Product documentation</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" width="150"><a href="https://www.waveshare.com/wiki/ESP32-P4-Knob-Touch-AMOLED-1.75"><img src="docs/images/esp32-p4-knob-touch-amoled-1.75.jpg" alt="ESP32-P4-Knob-Touch-AMOLED-1.75 development board" width="140"></a></td>
+    <td valign="middle" width="350">
+      <p><strong>ESP32-P4-Knob-Touch-AMOLED-1.75</strong></p>
+      <a href="boards/esp32_p4_knob_touch_amoled_1_75/">Board definition</a> · <a href="https://www.waveshare.com/wiki/ESP32-P4-Knob-Touch-AMOLED-1.75">Product documentation</a>
+    </td>
+  </tr>
+</table>
+
+### ESP32-S31
+
+<table>
+  <tr>
+    <td align="center" valign="middle" width="180">
+      <a href="https://docs.waveshare.com/ESP32-S31-Touch-LCD-4.3C">
+        <img src="https://raw.githubusercontent.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/8007c28a43f19fea878a61df5ad34ee61cecb5e4/docs/images/Product-1.webp" alt="ESP32-S31-Touch-LCD-4.3C development board" width="160">
+      </a>
+    </td>
+    <td valign="middle" width="600">
+      <p><strong>ESP32-S31-Touch-LCD-4.3C</strong></p>
+      <a href="boards/esp32_s31_touch_lcd_4_3c/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-S31-Touch-LCD-4.3C">Product documentation</a>
     </td>
   </tr>
 </table>
@@ -158,6 +170,7 @@ such as `spi_sd` describe a bus; they do not imply a complete storage applicatio
 <!-- BEGIN SUPPORTED_BOARDS -->
 | Board | Chip | Device definitions | Peripheral definitions |
 | --- | --- | --- | --- |
+| [`esp32_p4_knob_touch_amoled_1_75`](boards/esp32_p4_knob_touch_amoled_1_75/) | ESP32-P4 | `display_lcd`, `lcd_touch`, `audio_dac`, `audio_adc`, `fs_spiffs`, `fs_sdcard`, `wireless` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_knob_cw`, `gpio_knob_ccw`, `gpio_haptic_in1`, `gpio_haptic_in2`, `gpio_boot`, `gpio_power`, `gpio_rtc_int`, `gpio_imu_int1`, `gpio_imu_int2`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_nano`](boards/esp32_p4_nano/) | ESP32-P4 | `audio_dac`, `audio_adc`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_nano_wifi6_db`](boards/esp32_p4_nano_wifi6_db/) | ESP32-P4 | `audio_dac`, `audio_adc`, `camera`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_wifi6`](boards/esp32_p4_wifi6/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
@@ -194,6 +207,10 @@ status LED. Custom devices require application-side adapters; see
 ESP32-S31-Touch-LCD-4.3C uses target `esp32s31`; the ESP32-S3 quick-start commands
 below do not apply to it. See [board notes](docs/BOARDS.md#s31-touch-lcd-43c-definition-scope)
 for preview/development toolchain requirements, initialization and current CI limits.
+
+ESP32-P4-Knob-Touch-AMOLED-1.75 uses target `esp32p4`. Its SD card, wireless
+co-processor and SPIFFS entries have application-side prerequisites; see
+[its support scope](docs/BOARDS.md#p4-knob-touch-amoled-175-definition-scope).
 
 <a id="quick-start"></a>
 
