@@ -169,6 +169,7 @@
 <!-- BEGIN SUPPORTED_BOARDS -->
 | 开发板 | 芯片 | 设备定义 | 外设定义 |
 | --- | --- | --- | --- |
+| [`esp32_c5_touch_lcd_1_9`](boards/esp32_c5_touch_lcd_1_9/) | ESP32-C5 | `lcd_st7789v2`, `touch_cst816d`, `imu_qmi8658`, `tf_card`, `bat_axp2602` | `i2c_master`, `spi_tf`, `gpio_boot`, `gpio_power_key`, `ledc_backlight`, `gpio_touch_reset`, `gpio_touch_int`, `gpio_imu_int`, `gpio_axp_int` |
 | [`esp32_p4_knob_touch_amoled_1_75`](boards/esp32_p4_knob_touch_amoled_1_75/) | ESP32-P4 | `display_lcd`, `lcd_touch`, `audio_dac`, `audio_adc`, `fs_spiffs`, `fs_sdcard`, `wireless` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_knob_cw`, `gpio_knob_ccw`, `gpio_haptic_in1`, `gpio_haptic_in2`, `gpio_boot`, `gpio_power`, `gpio_rtc_int`, `gpio_imu_int1`, `gpio_imu_int2`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_nano`](boards/esp32_p4_nano/) | ESP32-P4 | `audio_dac`, `audio_adc`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_nano_wifi6_db`](boards/esp32_p4_nano_wifi6_db/) | ESP32-P4 | `audio_dac`, `audio_adc`, `camera`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
