@@ -1,0 +1,5 @@
+board: esp32_s31_touch_lcd_4_3c
+chip: esp32s31
+version: 1.0.0
+description: "Waveshare ESP32-S31-Touch-LCD-4.3C"
+manufacturer: "Waveshare"

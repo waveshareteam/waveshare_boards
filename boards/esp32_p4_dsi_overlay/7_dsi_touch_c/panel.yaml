@@ -1,0 +1,33 @@
+version: 1.0.0
+peripherals:
+  - name: dsi_display
+    config:
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1000
+devices:
+  - name: display_lcd
+    chip: ek79007
+    dependencies:
+      espressif/esp_lcd_ek79007: "*"
+    config:
+      bits_per_pixel: 16
+      dpi_config:
+        dpi_clock_freq_mhz: 52
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 3
+        video_timing:
+          h_size: 1024
+          v_size: 600
+          hsync_back_porch: 160
+          hsync_pulse_width: 10
+          hsync_front_porch: 160
+          vsync_back_porch: 23
+          vsync_pulse_width: 1
+          vsync_front_porch: 12
+  - name: lcd_touch
+    config:
+      touch_config:
+        x_max: 1024
+        y_max: 600

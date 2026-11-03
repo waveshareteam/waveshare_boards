@@ -9,12 +9,26 @@ is `waveshare/waveshare_boards`. Keep all definitions in:
 
 ```text
 boards/
+  esp32_p4_dsi_overlay/              DSI display overlays for -a, not a board
+  esp32_p4_knob_touch_amoled_1_75/
+  esp32_p4_nano/
+  esp32_p4_nano_wifi6_db/
+  esp32_p4_wifi6/
+  esp32_p4_wifi6_db/
+  esp32_p4_wifi6_db_poe_eth/
+  esp32_p4_wifi6_touch_lcd_3_5/
+  esp32_p4_wifi6_touch_lcd_4_3/
+  esp32_p4_wifi6_touch_lcd_4b/
+  esp32_p4_wifi6_touch_lcd_7b/
+  esp32_p4_wifi6_touch_lcd_x/
+  esp32_p4_wifi6_touch_lcd_xc/
+  esp32_s31_touch_lcd_4_3c/
   esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
-  esp32_s3_touch_lcd_7/
   esp32_s3_touch_amoled_1_75c/
   esp32_s3_touch_amoled_1_8/
   esp32_s3_touch_amoled_2_16/
+  esp32_s3_touch_lcd_7/
 ```
 
 Each model keeps `board_info.yaml`, `board_devices.yaml`,
@@ -31,6 +45,100 @@ but the layout must also work for local clones. The underscore suffix `_boards`
 passes this version's override-dependency name filter. No upstream patch or
 customer-path argument is needed. See the pinned
 [discovery implementation](https://github.com/espressif/esp-board-manager/blob/2beb9b22b0892b343bd555a1ebc9929a7edce8fc/generators/config_generator.py).
+
+## P4 Knob Touch AMOLED 1.75 definition scope
+
+`esp32_p4_knob_touch_amoled_1_75` targets **ESP32-P4 (`esp32p4`)**. It defines a
+466 × 466 CO5300 AMOLED on one MIPI-DSI data lane (480 Mbit/s, RGB565, three
+frame buffers), CST9217 touch, ES8389 playback with an amplifier enable, ES7210
+dual-microphone capture, microSD, SPIFFS, and GPIO declarations for the knob,
+vibration motor, BOOT and power keys, and the RTC and IMU interrupts. The included
+`setup_device.c` creates the CO5300 panel on the DSI bus prepared by Board Manager
+and the CST9217 touch driver. Both drivers are managed dependencies at the versions
+the product uses: `espressif/esp_lcd_co5300` 2.0.2 and
+`waveshare/esp_lcd_touch_cst9217` 2.0.0.
+
+The definition comes from the product's ESP-IDF examples, which use it with
+ESP-IDF v6.1 and Board Manager 0.7.4; only comments were reworded for this pack.
+The GPIO assignments and codec address straps below were checked against the
+product schematic, which is not published. This is not a full schematic audit or
+a physical-board test of this import.
+
+| Interface | Configured GPIOs / parameters |
+| --- | --- |
+| I2C1 | SDA 7, SCL 8; touch, codecs, RTC and IMU share the bus |
+| Display / touch | CO5300 reset 29; DSI PHY supply LDO_VO3 at 2500 mV; CST9217 reset 27, interrupt 26 |
+| I2S1 | MCLK 13, BCLK 12, WS 10, DOUT 9 (ES8389), DIN 11 (ES7210); 16 kHz, 16-bit stereo |
+| Amplifier | Enable 53 on the adapter board, active high |
+| microSD | SDMMC slot 0, 4-bit: CLK 43, CMD 44, D0–D3 39–42 |
+| Knob / vibration | Clockwise 20, counter-clockwise 21 (active low, both edges); DRV8837 IN1 22, IN2 23 |
+| Keys / interrupts | BOOT 35, power 2 (active low); RTC 3; IMU INT1 4, INT2 5 |
+
+ES8389 uses 7-bit `0x10` and ES7210 `0x40`; their YAML entries use the Board
+Manager 8-bit forms `0x20` and `0x80`. CST9217 is configured at `0xB4`.
+
+Display, touch, both codecs, the amplifier GPIO and `fs_spiffs` initialize
+automatically. `fs_spiffs` expects an application partition labelled `storage`.
+`fs_sdcard` uses `init_skip: true` and `ldo_chan_id: -1`: its IO supply, LDO_VO4,
+is shared with the SDIO link to the ESP32-C6 co-processor and is not acquired by
+this device. Applications must enable that supply, for example by starting the
+wireless link, before mounting the card. `wireless` is a custom device with
+`init_skip: true`; applications provide its adapter and driver, which this pack
+does not include. `sdkconfig.defaults.board` selects QIO 32 MB flash and 200 MHz
+HEX PSRAM, and a WARN-level bootloader log so the QIO bootloader fits before the
+default partition table at `0x8000`. The partition table is left to the application.
+
+The README uses the product image stored at
+[`docs/images/esp32-p4-knob-touch-amoled-1.75.jpg`](images/esp32-p4-knob-touch-amoled-1.75.jpg).
+
+## S31 Touch LCD 4.3C definition scope
+
+`esp32_s31_touch_lcd_4_3c` targets **ESP32-S31 (`esp32s31`)**, not ESP32-S3.
+It defines an 800 × 480 RGB565 display with two PSRAM frame buffers, GT911 touch,
+LEDC backlight (60% default), 4-bit SDMMC with active-low card power, ES8389
+audio input/output, RS485 and custom RTC, IMU, battery-gauge and CAN-FD devices.
+The included `setup_device.c` validates the selected GT911 address before
+calling the managed touch driver.
+
+The declared connections agree with the product's
+[hardware reference](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/HARDWARE_REFERENCE.md);
+the [S31 schematic](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/hardware/schematics/ESP32-S31-Touch-LCD-4.3C-Schematics.pdf)
+is available for further review. This is not a full schematic audit or a
+physical-board test of this import.
+
+| Interface | Configured GPIOs / parameters |
+| --- | --- |
+| I2C0 | SDA 0, SCL 1 |
+| RGB display | D0–D15: 8–19, 33–36; PCLK 40 at 26 MHz; DE 43, HSYNC 44, VSYNC 45 |
+| Touch / backlight | GT911 reset 46, interrupt 2; backlight 47 at 5 kHz |
+| SDMMC | CLK 24, CMD 25, D0–D3: 20–23; power enable 56, active low |
+| I2S0 / amplifier | BCLK 37, WS 38, DOUT 39, DIN 42; amplifier enable 57 |
+| RS485 | UART1 TX 6, RX 7, RTS/DE 61; 115200 baud, half-duplex |
+| CAN-FD | TX 4, RX 5; 500 kbit/s arbitration, 2 Mbit/s data |
+| RTC / IMU / battery | PCF85063ATL `0x51`, IRQ 3; QMI8658 `0x6B`/`0x6A`, IRQ 54; BQ27220 `0x55` |
+
+The sensor addresses above are 7-bit. GT911 uses 7-bit `0x5D`/`0x14`, and
+ES8389 uses `0x10`; their YAML entries use the Board Manager 8-bit forms
+`0xBA`/`0x28` and `0x20`. Audio defaults to 48 kHz, 16-bit stereo with
+no external MCLK configured; this does not prove the hardware lacks an MCLK net.
+The battery design capacity of 650 mAh is a software default.
+
+Display, touch, backlight, SD power/mount and audio do not skip initialization.
+In particular, an absent SD card can make automatic board initialization fail;
+mount failure never automatically formats the card. Applications must configure
+PSRAM for the display frame buffers. No board-specific sdkconfig defaults are
+included here. `rtc_pcf85063`, `imu_qmi8658`, `bat_bq27220` and `canfd`
+use `init_skip: true`; using these custom devices through Board Manager requires
+application-supplied adapters and explicit initialization. The RS485 entry
+describes a UART, and no USB device or host-stack initialization is defined here.
+
+The product's [toolchain configuration](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json)
+pins ESP-IDF `6.2.0-dev-08e0d30a74ad` (commit
+`08e0d30a74ad0bfd5a34933142b80f45619ee410`), Board Manager `0.7.5`,
+Component Manager `3.1.2` and codec `2.0.0-beta5`.
+These are product-side references, not new validation results for this pack.
+CI builds this profile on IDF v6.1 only, where S31 is a preview target;
+see [CI coverage](CI.md#esp32-s31-coverage-gap).
 
 ## LR1121 ePaper 2.9 definition scope
 

@@ -185,6 +185,17 @@ class BoardPackTests(unittest.TestCase):
         for cell in cells:
             self.assertEqual({'board', 'target', 'idf', 'bmgr', 'component_manager', 'bmgr_assist'}, set(cell))
 
+    def test_matrix_skips_idf_versions_without_the_target(self):
+        self.write('gamma/board_info.yaml', 'board: gamma\nchip: esp32s31\n')
+        self.write('gamma/board_devices.yaml', 'devices: []\n')
+        self.write('gamma/board_peripherals.yaml', 'peripherals: []\n')
+        config = json.loads((self.root / 'ci/versions.json').read_text())
+        config['unsupported_targets'] = {'v5.5.5': ['esp32s31']}
+        self.write('ci/versions.json', json.dumps(config))
+        cells = bp.matrix(self.root, bp.discover(self.root), ['0.7.2'])['include']
+        self.assertEqual([('gamma', 'v6.1')], [(c['board'], c['idf']) for c in cells if c['board'] == 'gamma'])
+        self.assertEqual(4, sum(c['board'] != 'gamma' for c in cells))
+
     def test_pin_is_exact_and_preserves_pack(self):
         self.write('ci/test_app/main/idf_component.yml',
                    'dependencies:\n  espressif/esp_board_manager:\n    version: "*"\n  waveshare_boards:\n    override_path: ../../../\n')

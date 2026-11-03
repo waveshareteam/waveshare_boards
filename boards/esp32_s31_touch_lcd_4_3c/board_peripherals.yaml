@@ -1,0 +1,86 @@
+# Pin map migrated from the existing demos, BSP, and board definitions in this repository.
+peripherals:
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 0
+      pins:
+        sda: 0
+        scl: 1
+      enable_internal_pullup: true
+      glitch_count: 7
+
+  - name: i2s_audio_out
+    type: i2s
+    role: master
+    format: std-out
+    config: &i2s_audio_config
+      port: 0
+      sample_rate_hz: 48000
+      mclk_multiple: 256
+      data_bit_width: 16
+      slot_bit_width: I2S_SLOT_BIT_WIDTH_AUTO
+      slot_mode: I2S_SLOT_MODE_STEREO
+      slot_mask: I2S_STD_SLOT_BOTH
+      ws_width: 16
+      pins:
+        mclk: -1
+        bclk: 37
+        ws: 38
+        dout: 39
+        din: 42
+
+  - name: i2s_audio_in
+    type: i2s
+    role: master
+    format: std-in
+    config: *i2s_audio_config
+
+  - name: ledc_backlight
+    type: ledc
+    config:
+      gpio_num: 47
+      channel: LEDC_CHANNEL_0
+      timer_sel: LEDC_TIMER_0
+      freq_hz: 5000
+      duty: 0
+      duty_resolution: LEDC_TIMER_10_BIT
+      speed_mode: LEDC_LOW_SPEED_MODE
+      output_invert: false
+
+  # Dedicated active-low SD card enable from the reference board definition.
+  - name: gpio_sd_power
+    type: gpio
+    role: io
+    config:
+      pin: 56
+      mode: GPIO_MODE_OUTPUT
+      default_level: 1
+
+  - name: gpio_power_amp
+    type: gpio
+    role: io
+    config:
+      pin: 57
+      mode: GPIO_MODE_OUTPUT
+      default_level: 0
+
+  - name: uart_rs485
+    type: uart
+    config:
+      uart_num: 1
+      rx_buffer_size: 1024
+      tx_buffer_size: 1024
+      tx_io_num: 6
+      rx_io_num: 7
+      rts_io_num: 61
+      cts_io_num: -1
+      uart_mode: UART_MODE_RS485_HALF_DUPLEX
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+        source_clk: UART_SCLK_DEFAULT

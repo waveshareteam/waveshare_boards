@@ -15,9 +15,10 @@ published versions satisfying the range are tested, with duplicates removed.
 Registry lookup failures fail the job. Each matrix entry records an exact version.
 
 The initial Board Manager floor is **0.7.2**, matching the reference board-pack
-template. Seven board profiles are discovered. Each resolved Board Manager version
-adds fourteen builds across the two IDF lines. Keep the floor until a deliberate
-compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
+template. Twenty board profiles are discovered: one ESP32-C5, six ESP32-S3, twelve ESP32-P4 and
+one ESP32-S31 board. The C5, S3 and P4 profiles build on both IDF lines and S31 on v6.1
+only, as described below, giving thirty-nine builds per resolved Board Manager version.
+Keep the floor until a deliberate compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
 not counted as successful builds.
 
 For IDF 5.5, Component Manager **2.5.0** is selected because the reference template documents
@@ -33,6 +34,25 @@ test uses the override form and invokes discovery without `-c`.
 Use `boards/<full_model>/` inside the pack: local scanning begins at the
 application's `components/` root, so adding another chip directory exceeds its
 three-level search limit. See [layout and source evidence](BOARDS.md).
+
+## ESP32-S31 coverage gap
+
+`ci/versions.json` lists, under `unsupported_targets`, the targets an IDF version
+cannot build; the matrix generator skips those combinations. ESP32-S31 is
+therefore built on v6.1 only:
+
+| IDF version | ESP32-S31 status | CI |
+| --- | --- | --- |
+| v5.5.5 | Not present in the official supported or preview target lists | Skipped |
+| v6.1 | Listed only in `PREVIEW_TARGETS`, not `SUPPORTED_TARGETS` | Built |
+
+Sources: [v5.5.5 target lists](https://github.com/espressif/esp-idf/blob/v5.5.5/tools/idf_py_actions/constants.py)
+and [v6.1 target lists](https://github.com/espressif/esp-idf/blob/v6.1/tools/idf_py_actions/constants.py).
+A v6.1 build shows that the profile generates and compiles for a preview target;
+it is not official target support. The product uses a pinned 6.2 development
+toolchain; see [its configuration](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json).
+That toolchain is not part of this pack's CI, and the product configuration uses
+Board Manager 0.7.5.
 
 ## Change routing
 

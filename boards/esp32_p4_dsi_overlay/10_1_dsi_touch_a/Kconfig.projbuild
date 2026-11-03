@@ -1,0 +1,3 @@
+config BOARD_DISPLAY_LAYOUT_800_1280
+    bool
+    default y

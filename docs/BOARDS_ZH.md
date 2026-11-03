@@ -9,12 +9,26 @@
 
 ```text
 boards/
+  esp32_p4_dsi_overlay/              供 -a 使用的 DSI 屏幕 overlay，不是板卡
+  esp32_p4_knob_touch_amoled_1_75/
+  esp32_p4_nano/
+  esp32_p4_nano_wifi6_db/
+  esp32_p4_wifi6/
+  esp32_p4_wifi6_db/
+  esp32_p4_wifi6_db_poe_eth/
+  esp32_p4_wifi6_touch_lcd_3_5/
+  esp32_p4_wifi6_touch_lcd_4_3/
+  esp32_p4_wifi6_touch_lcd_4b/
+  esp32_p4_wifi6_touch_lcd_7b/
+  esp32_p4_wifi6_touch_lcd_x/
+  esp32_p4_wifi6_touch_lcd_xc/
+  esp32_s31_touch_lcd_4_3c/
   esp32_s3_lr1121_epaper_2_9/
   esp32_s3_lr1121_oled_1_54_xf/
-  esp32_s3_touch_lcd_7/
   esp32_s3_touch_amoled_1_75c/
   esp32_s3_touch_amoled_1_8/
   esp32_s3_touch_amoled_2_16/
+  esp32_s3_touch_lcd_7/
 ```
 
 每个型号的 `board_info.yaml`、`board_devices.yaml`、`board_peripherals.yaml`、
@@ -28,6 +42,85 @@ boards/
 托管安装与覆盖依赖从包根目录开始扫描，但仓库结构也必须兼容本地克隆。
 `_boards` 后缀能够通过该版本对覆盖依赖名称的筛选，无需修改上级组件或传入 customer-path 参数。
 依据见固定版本的[扫描实现](https://github.com/espressif/esp-board-manager/blob/2beb9b22b0892b343bd555a1ebc9929a7edce8fc/generators/config_generator.py)。
+
+## P4 Knob Touch AMOLED 1.75 定义范围
+
+`esp32_p4_knob_touch_amoled_1_75` 使用 **ESP32-P4（`esp32p4`）**。配置包含
+466 × 466 CO5300 AMOLED（单通道 MIPI-DSI，480 Mbit/s，RGB565，三个帧缓冲）、CST9217 触摸、
+带功放使能的 ES8389 播放、ES7210 双麦克风采集、microSD、SPIFFS，
+以及旋钮、振动马达、BOOT 键、电源键和 RTC、IMU 中断的 GPIO 声明。
+随板提供的 `setup_device.c` 在 Board Manager 准备好的 DSI 总线上创建 CO5300 面板，并创建 CST9217 触摸驱动。
+两个驱动均为托管依赖，版本与产品一致：`espressif/esp_lcd_co5300` 2.0.2 和
+`waveshare/esp_lcd_touch_cst9217` 2.0.0。
+
+该定义来自产品的 ESP-IDF 示例，产品在 ESP-IDF v6.1 和 Board Manager 0.7.4 上使用；
+移入本组件包时只调整了注释。下表的 GPIO 分配和编解码器地址配置已对照产品原理图核对，原理图不公开。
+这不是完整的原理图审查，也不是本次导入的实机测试。
+
+| 接口 | 配置的 GPIO / 参数 |
+| --- | --- |
+| I2C1 | SDA 7，SCL 8；触摸、编解码器、RTC 和 IMU 共用 |
+| 显示 / 触摸 | CO5300 复位 29；DSI PHY 由 LDO_VO3 供电，2500 mV；CST9217 复位 27，中断 26 |
+| I2S1 | MCLK 13，BCLK 12，WS 10，DOUT 9（ES8389），DIN 11（ES7210）；16 kHz、16 位立体声 |
+| 功放 | 转接板上的使能 53，高电平有效 |
+| microSD | SDMMC 卡槽 0，四线：CLK 43，CMD 44，D0–D3 39–42 |
+| 旋钮 / 振动 | 顺时针 20，逆时针 21（低电平有效，双边沿中断）；DRV8837 IN1 22，IN2 23 |
+| 按键 / 中断 | BOOT 35，电源键 2（低电平有效）；RTC 3；IMU INT1 4，INT2 5 |
+
+ES8389 的 7 位地址为 `0x10`，ES7210 为 `0x40`；YAML 中使用 Board Manager 的 8 位写法 `0x20` 和 `0x80`。
+CST9217 配置为 `0xB4`。
+
+显示、触摸、两个编解码器、功放 GPIO 和 `fs_spiffs` 会自动初始化。`fs_spiffs` 要求应用分区表中有标签为 `storage` 的分区。
+`fs_sdcard` 使用 `init_skip: true` 和 `ldo_chan_id: -1`：其 IO 电源 LDO_VO4 与连接 ESP32-C6 协处理器的 SDIO 链路共用，
+此设备不会申请该电源。应用需在挂载前打开它，例如先启动无线链路。
+`wireless` 是 `init_skip: true` 的自定义设备，适配代码和驱动由应用提供，本组件包不包含。
+`sdkconfig.defaults.board` 选择 QIO 32 MB Flash 和 200 MHz HEX PSRAM，并把 bootloader 日志级别设为 WARN，
+使 QIO bootloader 能放在默认分区表偏移 `0x8000` 之前。分区表由应用决定。
+
+README 使用本仓库中的产品图
+[`docs/images/esp32-p4-knob-touch-amoled-1.75.jpg`](images/esp32-p4-knob-touch-amoled-1.75.jpg)。
+
+## S31 Touch LCD 4.3C 定义范围
+
+`esp32_s31_touch_lcd_4_3c` 使用 **ESP32-S31（`esp32s31`）**，与 ESP32-S3 不同。
+配置包含 800 × 480 RGB565 显示与两个 PSRAM 帧缓冲、GT911 触摸、
+默认 60% 的 LEDC 背光、低电平供电使能的四线 SDMMC、ES8389 音频输入输出、
+RS485，以及自定义 RTC、IMU、电量计和 CAN-FD 设备。
+随板提供的 `setup_device.c` 校验 Board Manager 选出的 GT911 地址，再调用托管触摸驱动。
+
+声明的接线与产品[硬件说明](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/HARDWARE_REFERENCE_ZH.md)一致，
+进一步核对可参考 [S31 原理图](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/hardware/schematics/ESP32-S31-Touch-LCD-4.3C-Schematics.pdf)。
+这不代表已完成完整原理图审计或本次导入配置的实机测试。
+
+| 接口 | 配置的 GPIO / 参数 |
+| --- | --- |
+| I2C0 | SDA 0、SCL 1 |
+| RGB 显示 | D0–D15：8–19、33–36；PCLK 40，26 MHz；DE 43、HSYNC 44、VSYNC 45 |
+| 触摸 / 背光 | GT911 复位 46、中断 2；背光 47，5 kHz |
+| SDMMC | CLK 24、CMD 25、D0–D3：20–23；电源使能 56，低电平有效 |
+| I2S0 / 功放 | BCLK 37、WS 38、DOUT 39、DIN 42；功放使能 57 |
+| RS485 | UART1 TX 6、RX 7、RTS/DE 61；115200 波特率，半双工 |
+| CAN-FD | TX 4、RX 5；仲裁速率 500 kbit/s，数据速率 2 Mbit/s |
+| RTC / IMU / 电量计 | PCF85063ATL `0x51`，IRQ 3；QMI8658 `0x6B`/`0x6A`，IRQ 54；BQ27220 `0x55` |
+
+上表传感器地址为 7 位地址。GT911 的 7 位地址为 `0x5D`/`0x14`，
+ES8389 为 `0x10`；YAML 使用 Board Manager 的 8 位表示 `0xBA`/`0x28` 和 `0x20`。
+音频默认 48 kHz、16 位立体声，软件未配置外部 MCLK，不能据此推断硬件没有 MCLK 网络。
+电池设计容量 650 mAh 是软件默认值。
+
+显示、触摸、背光、SD 供电/挂载和音频没有跳过初始化。
+未插 SD 卡可能导致自动板卡初始化失败；挂载失败不会自动格式化。
+应用需为显示帧缓冲配置 PSRAM，此目录没有附带板级 sdkconfig 默认文件。
+`rtc_pcf85063`、`imu_qmi8658`、`bat_bq27220` 和 `canfd` 设置了
+`init_skip: true`；通过 Board Manager 使用这些自定义设备时，
+需由应用提供适配代码并显式初始化。RS485 声明描述 UART，此处没有定义 USB 设备或主机栈初始化。
+
+产品的[工具链配置](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json)固定使用
+ESP-IDF `6.2.0-dev-08e0d30a74ad`（提交
+`08e0d30a74ad0bfd5a34933142b80f45619ee410`）、Board Manager `0.7.5`、
+Component Manager `3.1.2` 和 codec `2.0.0-beta5`。
+这些是产品工程的参考版本，不代表本组件包已完成同样验证。
+CI 只在 IDF v6.1 上编译此配置，S31 在该版本中属于预览目标，详见 [CI 覆盖](CI_ZH.md#esp32-s31-覆盖缺口)。
 
 ## LR1121 ePaper 2.9 定义范围
 

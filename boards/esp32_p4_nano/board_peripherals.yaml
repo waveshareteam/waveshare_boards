@@ -1,0 +1,69 @@
+peripherals:
+  # Shared by the ES8311, the GT911 touch controller, the OV5647 SCCB and the
+  # display backlight controller on the 15-pin DSI connector.
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 1
+      pins:
+        sda: 7
+        scl: 8
+  # One ES8311 drives both directions on the same I2S port.
+  - name: i2s_audio_out
+    type: i2s
+    role: master
+    format: tdm-out
+    config: &i2s_config
+      port: 1
+      sample_rate_hz: 24000
+      mclk_multiple: 256
+      data_bit_width: 16
+      slot_mode: I2S_SLOT_MODE_STEREO
+      ws_width: 16
+      total_slot: 2
+      slot_mask: I2S_TDM_SLOT0 | I2S_TDM_SLOT1
+      pins:
+        mclk: 13
+        bclk: 12
+        ws: 10
+        dout: 9
+        din: 11
+  - name: i2s_audio_in
+    type: i2s
+    role: master
+    format: tdm-in
+    config:
+      <<: *i2s_config
+  # NS4150B CTRL, active high.
+  - name: gpio_pa_control
+    type: gpio
+    role: io
+    config:
+      pin: 53
+      mode: GPIO_MODE_OUTPUT
+      default_level: 0
+  # AO3401 P-channel switch on the microSD VDD rail; a low level powers the card.
+  - name: gpio_sd_power
+    type: gpio
+    role: io
+    config:
+      pin: 45
+      mode: GPIO_MODE_OUTPUT
+      default_level: 0
+  # LDO_VO3 feeds VDD_MIPI_DPHY, shared by the DSI display and the CSI camera.
+  - name: ldo_mipi
+    type: ldo
+    config:
+      chan_id: 3
+      voltage_mv: 2500
+      adjustable: 1
+      owned_by_hw: 0
+  # Default panel is the 10.1-DSI-TOUCH-A (JD9365, 800x1280) at 1500 Mbps per lane.
+  - name: dsi_display
+    type: dsi
+    config:
+      bus_id: 0
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1500

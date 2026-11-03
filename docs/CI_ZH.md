@@ -13,7 +13,8 @@
 相同版本合并。组件库查询失败会使任务失败，每个矩阵项均记录明确版本。
 
 Board Manager 初始最低版本为 **0.7.2**，与参考板卡包模板一致。
-当前发现七块板卡，每个解析出的 Board Manager 版本在两个 IDF 版本线上共十四项编译。
+当前发现二十块板卡：一块 ESP32-C5、六块 ESP32-S3、十二块 ESP32-P4 和一块 ESP32-S31。C5、S3 与 P4 板卡在两个 IDF 版本线上编译，
+S31 只在 v6.1 上编译（见下文），每个解析出的 Board Manager 版本共三十九项编译。
 调整最低版本前需要明确兼容性变更并测试。
 不支持的芯片能力配置或生成失败会使 CI 失败，不会被计为编译成功。
 
@@ -26,6 +27,22 @@ Board Manager 0.7.2 可在托管安装、`components/` 本地克隆和清单 `ov
 依赖三种形式下识别 `waveshare_boards`。集成测试使用覆盖依赖，不传 `-c` 参数。
 组件包内采用 `boards/<完整型号>/`：本地扫描从应用的 `components/` 根目录开始，
 再增加一层芯片目录会超过其三层搜索限制。详见[目录与源码依据](BOARDS_ZH.md)。
+
+## ESP32-S31 覆盖缺口
+
+`ci/versions.json` 的 `unsupported_targets` 列出各 IDF 版本无法编译的目标，矩阵生成器会跳过这些组合，
+因此 ESP32-S31 只在 v6.1 上编译：
+
+| IDF 版本 | ESP32-S31 状态 | CI |
+| --- | --- | --- |
+| v5.5.5 | 官方支持目标和预览目标列表均不包含 S31 | 跳过 |
+| v6.1 | 仅列于 `PREVIEW_TARGETS`，不在 `SUPPORTED_TARGETS` | 编译 |
+
+依据：[v5.5.5 目标列表](https://github.com/espressif/esp-idf/blob/v5.5.5/tools/idf_py_actions/constants.py)
+和 [v6.1 目标列表](https://github.com/espressif/esp-idf/blob/v6.1/tools/idf_py_actions/constants.py)。
+v6.1 编译通过只说明该配置能为预览目标生成并编译，不代表官方支持。
+产品工程使用固定提交的 6.2 开发版工具链，见其[工具链配置](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json)。
+本组件包 CI 未引入该工具链；产品配置使用 Board Manager 0.7.5。
 
 ## 变更路由
 

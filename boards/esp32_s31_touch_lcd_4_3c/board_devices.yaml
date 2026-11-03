@@ -1,0 +1,207 @@
+devices:
+  - name: display_lcd
+    chip: generic_rgb
+    type: display_lcd
+    version: 1.0.0
+    sub_type: rgb
+    config:
+      swap_xy: false
+      mirror_y: false
+      mirror_x: false
+      invert_color: false
+      need_reset: true
+      bits_per_pixel: 16
+      rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+      data_endian: LCD_RGB_DATA_ENDIAN_BIG
+      rgb_panel_config:
+        clk_src: LCD_CLK_SRC_DEFAULT
+        data_width: 16
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 2
+        bounce_buffer_size_px: 0
+        dma_burst_size: 128
+        hsync_gpio_num: 44
+        vsync_gpio_num: 45
+        de_gpio_num: 43
+        pclk_gpio_num: 40
+        disp_gpio_num: -1
+        data_gpio_nums: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 33, 34, 35, 36]
+        timings:
+          pclk_hz: 26000000
+          h_res: 800
+          v_res: 480
+          hsync_pulse_width: 4
+          hsync_back_porch: 8
+          hsync_front_porch: 8
+          vsync_pulse_width: 4
+          vsync_back_porch: 8
+          vsync_front_porch: 8
+          flags:
+            pclk_active_neg: true
+        flags:
+          disp_active_low: false
+          refresh_on_demand: false
+          fb_in_psram: true
+          double_fb: true
+          no_fb: false
+
+  - name: lcd_touch
+    chip: gt911
+    type: lcd_touch
+    sub_type: i2c
+    version: 1.0.0
+    dependencies:
+      espressif/esp_lcd_touch_gt911: "*"
+    config:
+      io_i2c_config:
+        control_phase_bytes: 1
+        dc_bit_offset: 0
+        lcd_cmd_bits: 16
+        lcd_param_bits: 0
+        scl_speed_hz: 400000
+        flags:
+          dc_low_on_data: false
+          disable_control_phase: true
+      touch_config:
+        x_max: 800
+        y_max: 480
+        rst_gpio_num: 46
+        int_gpio_num: 2
+        levels:
+          reset: 0
+          interrupt: 0
+        flags:
+          swap_xy: false
+          mirror_x: false
+          mirror_y: false
+    peripherals:
+      - name: i2c_master
+        i2c_addr: [0xba, 0x28]
+
+  - name: lcd_brightness
+    type: ledc_ctrl
+    version: 1.0.0
+    config:
+      default_percent: 60
+    peripherals:
+      - name: ledc_backlight
+
+  - name: sdcard_power_ctrl
+    type: power_ctrl
+    sub_type: gpio
+    version: 1.0.0
+    peripherals:
+      - name: gpio_sd_power
+        active_level: 0
+
+  - name: fs_sdcard
+    type: fs_fat
+    sub_type: sdmmc
+    version: 1.0.0
+    power_ctrl_device: sdcard_power_ctrl
+    config:
+      mount_point: "/sdcard"
+      vfs_config:
+        format_if_mount_failed: false
+        max_files: 5
+        allocation_unit_size: 16384
+      sub_config:
+        slot: SDMMC_HOST_SLOT_0
+        frequency: SDMMC_FREQ_HIGHSPEED
+        bus_width: 4
+        slot_flags: SDMMC_SLOT_FLAG_INTERNAL_PULLUP
+        pins:
+          clk: 24
+          cmd: 25
+          d0: 20
+          d1: 21
+          d2: 22
+          d3: 23
+          cd: -1
+          wp: -1
+
+  - name: audio_dac
+    chip: es8389
+    type: audio_codec
+    version: 1.0.0
+    config:
+      adc_enabled: false
+      dac_enabled: true
+      sys_cfg:
+        no_mclk: true
+      dac_cfg:
+        ref_enable: true
+    peripherals:
+      - name: gpio_power_amp
+        pa_active_level: 1
+      - name: i2s_audio_out
+      - name: i2c_master
+        address: 0x20
+        frequency: 400000
+
+  - name: audio_adc
+    chip: es8389
+    type: audio_codec
+    version: 1.0.0
+    config:
+      adc_enabled: true
+      dac_enabled: false
+      sys_cfg:
+        no_mclk: true
+      adc_cfg:
+        digital_mic: false
+        label: ["FL", "FR", "RE", "NA"]
+    peripherals:
+      - name: i2s_audio_in
+      - name: i2c_master
+        address: 0x20
+        frequency: 400000
+
+  - name: rtc_pcf85063
+    chip: pcf85063atl
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x51
+      frequency: 400000
+      int_gpio: 3
+    peripherals:
+      - name: i2c_master
+
+  - name: imu_qmi8658
+    chip: qmi8658
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x6b
+      fallback_address: 0x6a
+      frequency: 400000
+      int_gpio: 54
+    peripherals:
+      - name: i2c_master
+
+  - name: bat_bq27220
+    chip: bq27220
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x55
+      frequency: 400000
+      design_capacity_mah: 650
+    peripherals:
+      - name: i2c_master
+
+  - name: canfd
+    chip: esp32s31_twai
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      tx_gpio: 4
+      rx_gpio: 5
+      arbitration_bitrate: 500000
+      data_bitrate: 2000000
