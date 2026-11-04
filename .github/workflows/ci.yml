@@ -94,6 +94,7 @@ jobs:
             python ../scripts/board_pack.py pin '${{ matrix.bmgr }}'
             idf.py bmgr -l
             idf.py bmgr -b '${{ matrix.board }}'
+            idf.py reconfigure
             idf.py build
 
   result:
