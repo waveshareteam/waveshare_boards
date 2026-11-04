@@ -10,7 +10,7 @@ peripherals:
   - name: i2s_audio_out
     type: i2s
     role: master
-    format: tdm-out
+    format: std-out
     config: &i2s_config
       port: 1
       sample_rate_hz: 24000
@@ -18,8 +18,6 @@ peripherals:
       data_bit_width: 16
       slot_mode: I2S_SLOT_MODE_STEREO
       ws_width: 16
-      total_slot: 2
-      slot_mask: I2S_TDM_SLOT0 | I2S_TDM_SLOT1
       pins:
         mclk: 13
         bclk: 12
@@ -34,6 +32,7 @@ peripherals:
       <<: *i2s_config
       total_slot: 4
       slot_mask: I2S_TDM_SLOT0 | I2S_TDM_SLOT1 | I2S_TDM_SLOT2 | I2S_TDM_SLOT3
+      bclk_div: 8
   - name: gpio_pa_control
     type: gpio
     role: io

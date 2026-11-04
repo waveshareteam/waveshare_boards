@@ -21,7 +21,7 @@ class BoardPackTests(unittest.TestCase):
         self.add_board('alpha')
         self.add_board('display/beta')
         self.write('ci/versions.json', (bp.ROOT / 'ci/versions.json').read_text())
-        self.write('idf_component.yml', 'dependencies:\n  espressif/esp_board_manager:\n    version: ">=0.7.2"\n')
+        self.write('idf_component.yml', 'dependencies:\n  espressif/esp_board_manager:\n    version: ">=0.7.5"\n')
         self.boards = bp.discover(self.root)
 
     def write(self, name, content):
@@ -89,7 +89,7 @@ class BoardPackTests(unittest.TestCase):
         self.write('boards/gamma/components/custom/source.c', 'int value;\n')
         self.git('add', '.')
         self.git('commit', '-qm', 'Board component fixture')
-        result, values = self.cli('matrix', '--base', base, '--bmgr', '0.7.2')
+        result, values = self.cli('matrix', '--base', base, '--bmgr', '0.7.5')
         self.assertEqual(0, result.returncode, result.stderr)
         cells = json.loads(values['matrix'])['include']
         self.assertEqual(2, len(cells))
@@ -163,22 +163,22 @@ class BoardPackTests(unittest.TestCase):
     def test_registry_exact_stable_endpoints(self):
         from idf_component_tools.utils import ComponentVersion
         releases = [SimpleNamespace(version=ComponentVersion(v)) for v in
-                    ('0.7.2', '0.9.0', '0.10.0', '1.0.0-rc1')]
+                    ('0.7.5', '0.9.0', '0.10.0', '1.0.0-rc1')]
         with patch('idf_component_tools.registry.service_details.get_storage_client') as client:
             client.return_value.versions.return_value.versions = releases
-            self.assertEqual(['0.7.2', '0.10.0'], bp.registry_versions(self.root))
+            self.assertEqual(['0.7.5', '0.10.0'], bp.registry_versions(self.root))
             client.return_value.versions.return_value.versions = releases[:1]
-            self.assertEqual(['0.7.2'], bp.registry_versions(self.root))
+            self.assertEqual(['0.7.5'], bp.registry_versions(self.root))
             client.return_value.versions.side_effect = RuntimeError('registry unavailable')
             with self.assertRaises(RuntimeError):
                 bp.registry_versions(self.root)
 
     def test_full_matrix_cli_records_exact_tooling(self):
-        result, values = self.cli('matrix', '--all', '--bmgr', '0.7.2')
+        result, values = self.cli('matrix', '--all', '--bmgr', '0.7.5')
         self.assertEqual(0, result.returncode, result.stderr)
         cells = json.loads(values['matrix'])['include']
         self.assertEqual(4, len(cells))
-        self.assertEqual({'v5.5.5', 'v6.1'}, {c['idf'] for c in cells})
+        self.assertEqual({'v5.5.6', 'v6.1'}, {c['idf'] for c in cells})
         self.assertEqual({'idf-component-manager==2.5.0', 'idf-component-manager==3.0.3'},
                          {c['component_manager'] for c in cells})
         self.assertEqual('true', values['has_builds'])
@@ -190,21 +190,21 @@ class BoardPackTests(unittest.TestCase):
         self.write('gamma/board_devices.yaml', 'devices: []\n')
         self.write('gamma/board_peripherals.yaml', 'peripherals: []\n')
         config = json.loads((self.root / 'ci/versions.json').read_text())
-        config['unsupported_targets'] = {'v5.5.5': ['esp32s31']}
+        config['unsupported_targets'] = {'v5.5.6': ['esp32s31']}
         self.write('ci/versions.json', json.dumps(config))
-        cells = bp.matrix(self.root, bp.discover(self.root), ['0.7.2'])['include']
+        cells = bp.matrix(self.root, bp.discover(self.root), ['0.7.5'])['include']
         self.assertEqual([('gamma', 'v6.1')], [(c['board'], c['idf']) for c in cells if c['board'] == 'gamma'])
         self.assertEqual(4, sum(c['board'] != 'gamma' for c in cells))
 
     def test_pin_is_exact_and_preserves_pack(self):
         self.write('ci/test_app/main/idf_component.yml',
                    'dependencies:\n  espressif/esp_board_manager:\n    version: "*"\n  waveshare_boards:\n    override_path: ../../../\n')
-        result, _ = self.cli('pin', '0.7.2')
+        result, _ = self.cli('pin', '0.7.5')
         self.assertEqual(0, result.returncode)
         deps = bp.load_yaml(self.root / 'ci/test_app/main/idf_component.yml')['dependencies']
-        self.assertEqual('==0.7.2', deps['espressif/esp_board_manager']['version'])
+        self.assertEqual('==0.7.5', deps['espressif/esp_board_manager']['version'])
         self.assertEqual('../../../', deps['waveshare_boards']['override_path'])
-        for value in ('*', '0.7.2;false', '1.0.0-rc1'):
+        for value in ('*', '0.7.5;false', '1.0.0-rc1'):
             with self.assertRaises(ValueError):
                 bp.pin(self.root, value)
 
