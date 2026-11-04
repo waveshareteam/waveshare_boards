@@ -77,6 +77,9 @@ devices:
     chip: st7703
     dependencies:
       waveshare/esp_lcd_st7703: "^2.0.0"
+      # The setup_device hook probes the DCS ID and selects this driver when the
+      # installed 4-inch module is JD9365DA.
+      espressif/esp_lcd_jd9365: "^2.0.2"
     config:
       reset_gpio_num: 27
       rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
@@ -90,12 +93,9 @@ devices:
         virtual_channel: 0
         dpi_clk_src: MIPI_DSI_DPI_CLK_SRC_DEFAULT
         dpi_clock_freq_mhz: 38
-        pixel_format: LCD_COLOR_PIXEL_FORMAT_RGB565
         in_color_format: LCD_COLOR_FMT_RGB565
         out_color_format: LCD_COLOR_FMT_RGB565
         num_fbs: 3
-        flags:
-          use_dma2d: true
         # ST7703_720_720_PANEL_60HZ_DPI_CONFIG timings from waveshare/esp_lcd_st7703.
         video_timing:
           h_size: 720
