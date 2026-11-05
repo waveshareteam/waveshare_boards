@@ -146,7 +146,8 @@ __attribute__((weak)) esp_err_t lcd_dsi_panel_factory_entry_t(
             },
         };
         esp_lcd_panel_dev_config_t config = panel_config_from_lcd_cfg(lcd_cfg, &vendor_config);
-        ESP_LOGI(TAG, "Detected JD9365DA; selecting 720x720 initialization");
+        ESP_LOGI(TAG, "Detected JD9365DA; selecting 8904ANT 720x720 initialization (%u commands)",
+                 (unsigned)vendor_config.init_cmds_size);
         return esp_lcd_new_panel_jd9365(lcd_handles->io_handle, &config,
                                         &lcd_handles->panel_handle);
     }
