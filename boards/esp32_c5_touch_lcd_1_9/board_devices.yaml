@@ -1,0 +1,74 @@
+devices:
+  - name: lcd_st7789v2
+    chip: st7789v2
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      width: 170
+      height: 320
+      x_gap: 35
+      pclk_hz: 40000000
+      invert_color: true
+      sclk_gpio: 7
+      mosi_gpio: 5
+      cs_gpio: 23
+      dc_gpio: 24
+      reset_gpio: 26
+      backlight_gpio: 10
+      backlight_active_level: 1
+
+  - name: touch_cst816d
+    chip: cst816d
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x15
+      frequency: 400000
+      reset_gpio: 8
+      interrupt_gpio: 0
+      width: 170
+      height: 320
+    peripherals:
+      - name: i2c_master
+
+  - name: imu_qmi8658
+    chip: qmi8658
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x6B
+      interrupt_gpio: 1
+    peripherals:
+      - name: i2c_master
+
+  - name: tf_card
+    chip: micro_sd
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      mode: sdspi
+      cs_gpio: 4
+      mosi_gpio: 5
+      miso_gpio: 6
+      sclk_gpio: 7
+    peripherals:
+      - name: spi_tf
+
+  - name: bat_axp2602
+    chip: axp2602
+    type: custom
+    version: 1.0.0
+    init_skip: true
+    config:
+      address: 0x62
+      frequency: 400000
+      sense_resistor_mohm: 10
+      idle_current_threshold_ma: 1
+      interrupt_gpio: 25
+      irq_connected: true
+    peripherals:
+      - name: i2c_master
