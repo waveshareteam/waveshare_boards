@@ -47,7 +47,7 @@ peripherals:
       duty: 0
       duty_resolution: LEDC_TIMER_10_BIT
       speed_mode: LEDC_LOW_SPEED_MODE
-      output_invert: false
+      output_invert: true
 
   # Dedicated active-low SD card enable from the reference board definition.
   - name: gpio_sd_power
