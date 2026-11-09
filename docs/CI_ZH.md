@@ -8,11 +8,11 @@
 发现第一方板卡定义，并为每块选中的板卡编译 `ci/test_app`。
 它不扫描上游板卡包，也不发布固件产物。
 
-`ci/versions.json` 选择两个受支持版本线的稳定版本：ESP-IDF **v5.5.5** 和 **v6.1**。
+`ci/versions.json` 选择两个受支持版本线的稳定版本：ESP-IDF **v5.5.6** 和 **v6.1**。
 每次运行从组件库解析一次 Board Manager 版本，按根目录清单的范围选择最早和最新的稳定已发布版本，
 相同版本合并。组件库查询失败会使任务失败，每个矩阵项均记录明确版本。
 
-Board Manager 初始最低版本为 **0.7.2**，与参考板卡包模板一致。
+Board Manager 最低版本为 **0.7.5**。
 当前发现二十块板卡：一块 ESP32-C5、六块 ESP32-S3、十二块 ESP32-P4 和一块 ESP32-S31。C5、S3 与 P4 板卡在两个 IDF 版本线上编译，
 S31 只在 v6.1 上编译（见下文），每个解析出的 Board Manager 版本共三十九项编译。
 调整最低版本前需要明确兼容性变更并测试。
@@ -23,7 +23,7 @@ Kconfig 条件依赖的处理问题。辅助工具为 **esp-bmgr-assist 0.8.3**�
 IDF 6.1 使用符合官方 3.0.x 约束的 Component Manager **3.0.3**，以支持 CMake 接口版本 5；2.5.0 不支持该接口。
 升级矩阵时重新评估这些工具版本，并在两个 IDF 版本线上重新验证生成和编译。
 
-Board Manager 0.7.2 可在托管安装、`components/` 本地克隆和清单 `override_path`
+Board Manager 0.7.5 可在托管安装、`components/` 本地克隆和清单 `override_path`
 依赖三种形式下识别 `waveshare_boards`。集成测试使用覆盖依赖，不传 `-c` 参数。
 组件包内采用 `boards/<完整型号>/`：本地扫描从应用的 `components/` 根目录开始，
 再增加一层芯片目录会超过其三层搜索限制。详见[目录与源码依据](BOARDS_ZH.md)。
@@ -35,10 +35,10 @@ Board Manager 0.7.2 可在托管安装、`components/` 本地克隆和清单 `ov
 
 | IDF 版本 | ESP32-S31 状态 | CI |
 | --- | --- | --- |
-| v5.5.5 | 官方支持目标和预览目标列表均不包含 S31 | 跳过 |
+| v5.5.6 | 官方支持目标和预览目标列表均不包含 S31 | 跳过 |
 | v6.1 | 仅列于 `PREVIEW_TARGETS`，不在 `SUPPORTED_TARGETS` | 编译 |
 
-依据：[v5.5.5 目标列表](https://github.com/espressif/esp-idf/blob/v5.5.5/tools/idf_py_actions/constants.py)
+依据：[v5.5.6 目标列表](https://github.com/espressif/esp-idf/blob/v5.5.6/tools/idf_py_actions/constants.py)
 和 [v6.1 目标列表](https://github.com/espressif/esp-idf/blob/v6.1/tools/idf_py_actions/constants.py)。
 v6.1 编译通过只说明该配置能为预览目标生成并编译，不代表官方支持。
 产品工程使用固定提交的 6.2 开发版工具链，见其[工具链配置](https://github.com/waveshareteam/ESP32-S31-Touch-LCD-4.3C/blob/8007c28a43f19fea878a61df5ad34ee61cecb5e4/releases/config.json)。
@@ -80,15 +80,16 @@ python ci/scripts/board_pack.py check
 python scripts/update_supported_boards_table.py --check
 python ci/scripts/check_docs.py
 python ci/scripts/board_pack.py matrix --all
-python ci/scripts/board_pack.py pin 0.7.2
+python ci/scripts/board_pack.py pin 0.7.5
 idf.py -C ci/test_app bmgr -l
 idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7
+idf.py -C ci/test_app reconfigure
 idf.py -C ci/test_app build
 compote component pack --name waveshare_boards
 ```
 
 每个 IDF / Board Manager 组合使用独立干净副本，避免生成组件、依赖锁和 sdkconfig 跨环境混用。
-离线复现矩阵时，可在 matrix 命令末尾添加 `--bmgr 0.7.2`。
+离线复现矩阵时，可在 matrix 命令末尾添加 `--bmgr 0.7.5`。
 检查 PR 差异时，在完整 Git 历史下使用 `matrix --base origin/main`。
 集成测试清单中的固定版本属于临时构建输入，只有主动调整基线时才提交其变化。
 
@@ -102,7 +103,7 @@ GT911 驱动继续使用板卡原有的托管依赖 **1.2.1** 约束；更换版
 官方原理图链接与 AMOLED 迁移核对内容见[板卡说明](BOARDS_ZH.md)。
 实机运行和应用层集成需要分别验证。
 
-主要资料：[IDF v5.5.5](https://github.com/espressif/esp-idf/releases/tag/v5.5.5)、
+主要资料：[IDF v5.5.6](https://github.com/espressif/esp-idf/releases/tag/v5.5.6)、
 [IDF v6.1](https://github.com/espressif/esp-idf/releases/tag/v6.1)、
 [5.5 到 6.0 迁移](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/migration-guides/release-6.x/6.0/index.html)、
 [6.0 到 6.1 迁移](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/migration-guides/release-6.x/6.1/index.html)、

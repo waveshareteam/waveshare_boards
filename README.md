@@ -138,7 +138,7 @@ bilingual documentation, and generation/build checks.
     <td align="center" valign="middle" width="150"><a href="https://www.waveshare.com/wiki/ESP32-P4-Knob-Touch-AMOLED-1.75"><img src="docs/images/esp32-p4-knob-touch-amoled-1.75.jpg" alt="ESP32-P4-Knob-Touch-AMOLED-1.75 development board" width="140"></a></td>
     <td valign="middle" width="350">
       <p><strong>ESP32-P4-Knob-Touch-AMOLED-1.75</strong></p>
-      <a href="boards/esp32_p4_knob_touch_amoled_1_75/">Board definition</a> · <a href="https://www.waveshare.com/wiki/ESP32-P4-Knob-Touch-AMOLED-1.75">Product documentation</a>
+      <a href="boards/esp32_p4_knob_touch_amoled_1_75/">Board definition</a> · <a href="https://docs.waveshare.com/ESP32-P4-Knob-Touch-AMOLED-1.75X">Product documentation</a>
     </td>
   </tr>
 </table>

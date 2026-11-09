@@ -1,6 +1,6 @@
 dependencies:
   espressif/esp_board_manager:
-    version: "==0.7.2"
+    version: "==0.7.5"
     require: public
   waveshare_boards:
     override_path: ../../../

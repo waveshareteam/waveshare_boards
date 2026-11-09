@@ -8,14 +8,13 @@
 discovers first-party board definitions and builds `ci/test_app` for each selected
 board. It does not scan upstream board packs or publish firmware artifacts.
 
-`ci/versions.json` selects ESP-IDF **v5.5.5** and **v6.1**, the stable releases
+`ci/versions.json` selects ESP-IDF **v5.5.6** and **v6.1**, the stable releases
 selected for the two supported lines. Board Manager versions are resolved once
 per run from the registry using the root manifest: the oldest and newest stable
 published versions satisfying the range are tested, with duplicates removed.
 Registry lookup failures fail the job. Each matrix entry records an exact version.
 
-The initial Board Manager floor is **0.7.2**, matching the reference board-pack
-template. Twenty board profiles are discovered: one ESP32-C5, six ESP32-S3, twelve ESP32-P4 and
+The Board Manager floor is **0.7.5**. Twenty board profiles are discovered: one ESP32-C5, six ESP32-S3, twelve ESP32-P4 and
 one ESP32-S31 board. The C5, S3 and P4 profiles build on both IDF lines and S31 on v6.1
 only, as described below, giving thirty-nine builds per resolved Board Manager version.
 Keep the floor until a deliberate compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
@@ -28,7 +27,7 @@ consistent with its 3.0.x constraints and required CMake interface version 5;
 2.5.0 cannot serve that interface. Revisit these tooling pins when upgrading the matrix and
 rerun generation and compilation on both IDF lines.
 
-Board Manager 0.7.2 recognizes `waveshare_boards` in managed installs, local
+Board Manager 0.7.5 recognizes `waveshare_boards` in managed installs, local
 `components/` clones, and manifest `override_path` dependencies. The integration
 test uses the override form and invokes discovery without `-c`.
 Use `boards/<full_model>/` inside the pack: local scanning begins at the
@@ -43,10 +42,10 @@ therefore built on v6.1 only:
 
 | IDF version | ESP32-S31 status | CI |
 | --- | --- | --- |
-| v5.5.5 | Not present in the official supported or preview target lists | Skipped |
+| v5.5.6 | Not present in the official supported or preview target lists | Skipped |
 | v6.1 | Listed only in `PREVIEW_TARGETS`, not `SUPPORTED_TARGETS` | Built |
 
-Sources: [v5.5.5 target lists](https://github.com/espressif/esp-idf/blob/v5.5.5/tools/idf_py_actions/constants.py)
+Sources: [v5.5.6 target lists](https://github.com/espressif/esp-idf/blob/v5.5.6/tools/idf_py_actions/constants.py)
 and [v6.1 target lists](https://github.com/espressif/esp-idf/blob/v6.1/tools/idf_py_actions/constants.py).
 A v6.1 build shows that the profile generates and compiles for a preview target;
 it is not official target support. The product uses a pinned 6.2 development
@@ -93,16 +92,17 @@ python ci/scripts/board_pack.py check
 python scripts/update_supported_boards_table.py --check
 python ci/scripts/check_docs.py
 python ci/scripts/board_pack.py matrix --all
-python ci/scripts/board_pack.py pin 0.7.2
+python ci/scripts/board_pack.py pin 0.7.5
 idf.py -C ci/test_app bmgr -l
 idf.py -C ci/test_app bmgr -b esp32_s3_touch_lcd_7
+idf.py -C ci/test_app reconfigure
 idf.py -C ci/test_app build
 compote component pack --name waveshare_boards
 ```
 
 Use a fresh checkout for each IDF/Board Manager combination so generated
 components, dependency locks, and sdkconfig files do not cross environments.
-For an offline matrix reproduction, append `--bmgr 0.7.2` to the matrix command.
+For an offline matrix reproduction, append `--bmgr 0.7.5` to the matrix command.
 For a PR range, use `matrix --base origin/main` with the complete Git history.
 The integration manifest pin is temporary build input; do not commit a changed
 pin unless intentionally changing the baseline.
@@ -120,7 +120,7 @@ PSRAM provisioning, touch reset sequencing, or physical operation. Official sche
 [board notes](BOARDS.md). Physical operation and application-level integration
 remain separate validation steps.
 
-Primary references: [IDF v5.5.5](https://github.com/espressif/esp-idf/releases/tag/v5.5.5),
+Primary references: [IDF v5.5.6](https://github.com/espressif/esp-idf/releases/tag/v5.5.6),
 [IDF v6.1](https://github.com/espressif/esp-idf/releases/tag/v6.1),
 [5.5 to 6.0 migration](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/migration-guides/release-6.x/6.0/index.html),
 [6.0 to 6.1 migration](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/migration-guides/release-6.x/6.1/index.html),

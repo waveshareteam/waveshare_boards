@@ -1,4 +1,4 @@
-version: "0.2.0"
+version: "0.3.2"
 description: Waveshare board definitions for ESP Board Manager
 license: Apache-2.0
 url: https://github.com/waveshareteam/waveshare_boards
@@ -8,10 +8,10 @@ tags:
   - board_manager
   - boards
 dependencies:
-  # 0.7.2 is the board-pack template baseline; CI tests this floor and the
+  # 0.7.5 is the board-pack baseline; CI tests this floor and the
   # newest stable version satisfying this range before compatibility is claimed.
   espressif/esp_board_manager:
-    version: ">=0.7.2"
+    version: ">=0.7.5"
     require: public
 files:
   exclude:
