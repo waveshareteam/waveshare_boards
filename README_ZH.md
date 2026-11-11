@@ -98,7 +98,7 @@
     </td>
   </tr>
   <tr>
-    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-4B/main/docs/assets/esp32-p4-wifi6-touch-lcd-4b.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-4B 开发板" width="140"></a></td>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B"><img src="https://www.waveshare.com/media/catalog/product/cache/1/image/800x800/9df78eab33525d08d6e5fb8d27136e95/e/s/esp32-p4-wifi6-touch-lcd-4b-1.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-4B 开发板" width="140"></a></td>
     <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-4B</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_4b/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B">产品文档</a>
