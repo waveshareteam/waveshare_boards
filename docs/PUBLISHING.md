@@ -48,7 +48,7 @@ it does not affect ordinary PR CI.
 ## Publish a version
 
 1. Update `version` in `idf_component.yml`, keep both language pages current,
-   and merge the PR after all required checks pass. The current version is `0.3.0`.
+   and merge the PR after all required checks pass. The current version is `0.3.4`.
 2. **Publish board pack** runs automatically on `main`. For a new version, it
    compiles every board, creates `v<version>` on that exact commit, uploads
    `waveshare/waveshare_boards`, and creates the GitHub Release after the registry
@@ -57,7 +57,7 @@ it does not affect ordinary PR CI.
 3. Verify the registry version page and install it into a fresh application:
 
    ```bash
-   idf.py add-dependency "waveshare/waveshare_boards==0.3.0"
+   idf.py add-dependency "waveshare/waveshare_boards==0.3.4"
    ```
 
 Merging with an already released version does not publish again. Increase the
