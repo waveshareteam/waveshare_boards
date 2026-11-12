@@ -42,7 +42,7 @@ GitHub 自动提供的 `GITHUB_TOKEN` 不能替代组件库令牌。
 ## 发布版本
 
 1. 更新 `idf_component.yml` 中的 `version`，维护双语文档，所有必需检查通过后合并 PR。
-   当前版本为 `0.3.4`。
+   当前版本为 `0.3.5`。
 2. `main` 上自动运行 **Publish board pack**。对于新版本，工作流先编译全部板卡，
    再在该确切提交上创建 `v<version>` 标签，上传 `waveshare/waveshare_boards`，
    组件库确认成功后创建 GitHub Release。发布前始终运行完整矩阵，
@@ -50,7 +50,7 @@ GitHub 自动提供的 `GITHUB_TOKEN` 不能替代组件库令牌。
 3. 检查组件库版本页面，并在全新应用中验证安装：
 
    ```bash
-   idf.py add-dependency "waveshare/waveshare_boards==0.3.4"
+   idf.py add-dependency "waveshare/waveshare_boards==0.3.5"
    ```
 
 合并时若版本已经发布，不会再次上传。后续修改需要交付给组件库用户时，必须增加清单版本号。
