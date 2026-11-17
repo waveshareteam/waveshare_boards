@@ -98,7 +98,7 @@
     </td>
   </tr>
   <tr>
-    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B"><img src="https://raw.githubusercontent.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-4B/main/docs/assets/esp32-p4-wifi6-touch-lcd-4b.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-4B 开发板" width="140"></a></td>
+    <td align="center" valign="middle" width="150"><a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B"><img src="https://www.waveshare.com/media/catalog/product/cache/1/image/800x800/9df78eab33525d08d6e5fb8d27136e95/e/s/esp32-p4-wifi6-touch-lcd-4b-1.jpg" alt="ESP32-P4-WIFI6-Touch-LCD-4B 开发板" width="140"></a></td>
     <td valign="middle" width="350">
       <p><strong>ESP32-P4-WIFI6-Touch-LCD-4B</strong></p>
       <a href="boards/esp32_p4_wifi6_touch_lcd_4b/">板卡定义</a> · <a href="https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-4B">产品文档</a>
@@ -175,7 +175,7 @@
 | [`esp32_p4_nano_wifi6_db`](boards/esp32_p4_nano_wifi6_db/) | ESP32-P4 | `audio_dac`, `audio_adc`, `camera`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `lcd_touch` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_wifi6`](boards/esp32_p4_wifi6/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_wifi6_db`](boards/esp32_p4_wifi6_db/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
-| [`esp32_p4_wifi6_db_poe_eth`](boards/esp32_p4_wifi6_db_poe_eth/) | ESP32-P4 | `camera`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
+| [`esp32_p4_wifi6_db_poe_eth`](boards/esp32_p4_wifi6_db_poe_eth/) | ESP32-P4 | `camera`, `ethernet`, `audio_dac`, `audio_adc`, `display_lcd`, `lcd_brightness`, `fs_spiffs`, `lcd_touch`, `fs_sdcard`, `sdcard_power_ctrl` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display` |
 | [`esp32_p4_wifi6_touch_lcd_3_5`](boards/esp32_p4_wifi6_touch_lcd_3_5/) | ESP32-P4 | `audio_dac`, `audio_adc`, `fs_spiffs`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `lcd_brightness`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `ldo_mipi`, `spi_lcd`, `ledc_backlight` |
 | [`esp32_p4_wifi6_touch_lcd_4_3`](boards/esp32_p4_wifi6_touch_lcd_4_3/) | ESP32-P4 | `audio_dac`, `audio_adc`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `lcd_brightness`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display`, `ledc_backlight` |
 | [`esp32_p4_wifi6_touch_lcd_4b`](boards/esp32_p4_wifi6_touch_lcd_4b/) | ESP32-P4 | `audio_dac`, `audio_adc`, `fs_spiffs`, `sdcard_power_ctrl`, `fs_sdcard`, `display_lcd`, `lcd_touch`, `lcd_brightness`, `camera` | `i2c_master`, `i2s_audio_out`, `i2s_audio_in`, `gpio_pa_control`, `gpio_sd_power`, `ldo_mipi`, `dsi_display`, `ledc_backlight` |
