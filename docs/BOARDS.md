@@ -16,6 +16,7 @@ boards/
   esp32_p4_wifi6/
   esp32_p4_wifi6_db/
   esp32_p4_wifi6_db_poe_eth/
+  esp32_p4_wifi6_db_touch_lcd_7c/
   esp32_p4_wifi6_touch_lcd_3_5/
   esp32_p4_wifi6_touch_lcd_4_3/
   esp32_p4_wifi6_touch_lcd_4b/
