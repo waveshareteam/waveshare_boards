@@ -1,0 +1,163 @@
+# Peripherals for the Waveshare ESP32-P4-WIFI6-DB 7C board.
+peripherals:
+  # RS-232 UART. No hardware flow-control pins are assigned.
+  - name: uart_232
+    type: uart
+    role: io
+    config:
+      uart_num: 2
+      rx_buffer_size: 4096
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+      tx_io_num: 28
+      rx_io_num: 29
+      rts_io_num: -1
+      cts_io_num: -1
+      uart_mode: UART_MODE_UART
+
+  # RS-485 half-duplex UART. RTS drives the external transceiver DE/RE pin.
+  - name: uart_485
+    type: uart
+    role: io
+    config:
+      uart_num: 1
+      rx_buffer_size: 4096
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+      tx_io_num: 26
+      rx_io_num: 27
+      rts_io_num: 34
+      cts_io_num: -1
+      uart_mode: UART_MODE_RS485_HALF_DUPLEX
+
+  # Shared I2C bus for ES8389, GT911, PCF85063A, and the CSI camera control bus.
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 1
+      pins:
+        sda: 7
+        scl: 8
+
+  # Full-duplex I2S bus used by the ES8389 codec.
+  - name: i2s_audio_out
+    type: i2s
+    format: "std-out"
+    role: master
+    config: &i2s_config
+      port: 1
+      sample_rate_hz: 48000
+      clk_src: "I2S_CLK_SRC_DEFAULT"
+      mclk_multiple: 256
+      data_bit_width: 16
+      slot_mode: "I2S_SLOT_MODE_STEREO"
+      slot_mask: "I2S_STD_SLOT_BOTH"
+      ws_width: 16
+      pins:
+        mclk: 13
+        bclk: 12
+        ws: 10
+        dout: 9
+        din: 11
+
+  - name: i2s_audio_in
+    type: i2s
+    format: "std-in"
+    role: master
+    config: *i2s_config
+
+  # ES8389 power amplifier enable, active high.
+  - name: gpio_pa_control
+    type: gpio
+    role: io
+    config:
+      pin: 53
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      pull_down: false
+      intr_type: GPIO_INTR_DISABLE
+      default_level: 0
+
+  # SD card power switch, active low.
+  - name: gpio_sd_power
+    type: gpio
+    role: io
+    config:
+      pin: 45
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      default_level: 0
+
+  # MIPI DSI PHY supply shared by the display and CSI camera.
+  - name: ldo_mipi
+    type: ldo
+    config:
+      chan_id: 3
+      voltage_mv: 2500
+      adjustable: 1
+      owned_by_hw: 0
+
+  - name: dsi_display
+    type: dsi
+    config:
+      bus_id: 0
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1000
+
+  # EK79007 backlight is electrically active low on this board.
+  - name: ledc_backlight
+    type: ledc
+    version: default
+    config:
+      gpio_num: 30
+      speed_mode: LEDC_LOW_SPEED_MODE
+      channel: 1
+      timer_sel: 1
+      freq_hz: 5000
+      duty_resolution: LEDC_TIMER_10_BIT
+      duty: 0
+      output_invert: true
+
+  # Backlight driver enable, active low; high or unconfigured keeps the backlight off.
+  - name: gpio_lcd_backlight_en
+    type: gpio
+    role: io
+    config:
+      pin: 52
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      pull_down: false
+      intr_type: GPIO_INTR_DISABLE
+      default_level: 1
+
+  - name: gpio_user_led_1
+    type: gpio
+    role: io
+    config:
+      pin: 2
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      pull_down: false
+      intr_type: GPIO_INTR_DISABLE
+      default_level: 1
+
+  - name: gpio_user_led_2
+    type: gpio
+    role: io
+    config:
+      pin: 3
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      pull_down: false
+      intr_type: GPIO_INTR_DISABLE
+      default_level: 1

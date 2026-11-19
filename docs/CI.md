@@ -14,9 +14,9 @@ per run from the registry using the root manifest: the oldest and newest stable
 published versions satisfying the range are tested, with duplicates removed.
 Registry lookup failures fail the job. Each matrix entry records an exact version.
 
-The Board Manager floor is **0.7.5**. Twenty board profiles are discovered: one ESP32-C5, six ESP32-S3, twelve ESP32-P4 and
+The Board Manager floor is **0.7.5**. Twenty-one board profiles are discovered: one ESP32-C5, six ESP32-S3, thirteen ESP32-P4 and
 one ESP32-S31 board. The C5, S3 and P4 profiles build on both IDF lines and S31 on v6.1
-only, as described below, giving thirty-nine builds per resolved Board Manager version.
+only, as described below, giving forty-one builds per resolved Board Manager version.
 Keep the floor until a deliberate compatibility change is tested. Unsupported catalog profiles or generation failures fail CI; they are
 not counted as successful builds.
 
