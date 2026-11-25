@@ -33,6 +33,8 @@ static const char *touch_firmware_tag = "GT911_CFG_UPDATE";
 #define TOUCH_GT911_MAX_TOUCH_OFFSET (5U)
 #define TOUCH_GT911_MODULE_SWITCH1_OFFSET (6U)
 #define TOUCH_GT911_AXIS_REVERSE_MASK (0xC0U)
+#define TOUCH_GT911_AXIS_SWAP_MASK (0x08U)
+#define TOUCH_GT911_AXIS_DIRECTION_MASK (TOUCH_GT911_AXIS_REVERSE_MASK | TOUCH_GT911_AXIS_SWAP_MASK)
 
 static const uint8_t s_gt911_config_template[TOUCH_GT911_CONFIG_SIZE] = {
     0x5B, 0x00, 0x04, 0x58, 0x02, 0x05, 0x3D, 0x00, 0x22, 0x08, 0x1E, 0x08, 0x6E, 0x50, 0x03, 0x03, 0x00, 0x00, 0x00, 0x00, 0x11, 0x11, 0x00, 0x18, 0x1A, 0x1E, 0x14, 0x8C, 0x2E, 0x0E, 0xB1,
@@ -124,7 +126,8 @@ static bool touch_gt911_config_matches(const uint8_t *current_config, const uint
     return current_config[TOUCH_GT911_X_RES_OFFSET] == target_config[TOUCH_GT911_X_RES_OFFSET] && current_config[TOUCH_GT911_X_RES_OFFSET + 1] == target_config[TOUCH_GT911_X_RES_OFFSET + 1] &&
            current_config[TOUCH_GT911_Y_RES_OFFSET] == target_config[TOUCH_GT911_Y_RES_OFFSET] && current_config[TOUCH_GT911_Y_RES_OFFSET + 1] == target_config[TOUCH_GT911_Y_RES_OFFSET + 1] &&
            current_config[TOUCH_GT911_MAX_TOUCH_OFFSET] == target_config[TOUCH_GT911_MAX_TOUCH_OFFSET] &&
-           (current_config[TOUCH_GT911_MODULE_SWITCH1_OFFSET] & TOUCH_GT911_AXIS_REVERSE_MASK) == (target_config[TOUCH_GT911_MODULE_SWITCH1_OFFSET] & TOUCH_GT911_AXIS_REVERSE_MASK);
+           (current_config[TOUCH_GT911_MODULE_SWITCH1_OFFSET] & TOUCH_GT911_AXIS_DIRECTION_MASK) ==
+           (target_config[TOUCH_GT911_MODULE_SWITCH1_OFFSET] & TOUCH_GT911_AXIS_DIRECTION_MASK);
 }
 
 static esp_err_t touch_gt911_update_config(esp_lcd_panel_io_handle_t io, uint16_t x_res, uint16_t y_res)
