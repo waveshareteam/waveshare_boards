@@ -1,0 +1,93 @@
+name: Codex bilingual review summary
+run-name: "Codex review summary · PR #${{ inputs.pr || github.event.issue.number }}"
+
+on:
+  # Codex posts/updates its status on the base repository, including for fork PRs.
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number
+        required: true
+        type: string
+      receipt:
+        description: "Optional receipt (review:<id> or comment:<id>); defaults to the latest review"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  identify:
+    name: Identify Codex review receipt
+    if: >-
+      github.ref_name == github.event.repository.default_branch &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.pull_request &&
+      github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
+      github.event.sender.login == 'chatgpt-codex-connector[bot]' &&
+      (startsWith(github.event.comment.body, '<!-- codex-review-receipt:v1 -->') ||
+      (startsWith(github.event.comment.body, '<!-- codex-pull-request-review-summary -->') &&
+      contains(github.event.comment.body, 'completed')))))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      pr: ${{ steps.receipt.outputs.pr }}
+      receipt: ${{ steps.receipt.outputs.receipt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 ci/scripts/codex_review_summary.py identify
+
+  publish:
+    name: Publish bilingual review summary
+    needs: identify
+    if: needs.identify.outputs.receipt != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    # A receipt and a status edit can describe the same review; separate rounds
+    # on the same SHA have different receipt IDs and are never deduplicated.
+    concurrency:
+      group: codex-bilingual-${{ needs.identify.outputs.pr }}-${{ needs.identify.outputs.receipt }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: write
+    env:
+      PR_NUMBER: ${{ needs.identify.outputs.pr }}
+      RECEIPT_KEY: ${{ needs.identify.outputs.receipt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 ci/scripts/codex_review_summary.py prepare
+      - uses: actions/setup-python@v5
+        if: steps.prepare.outputs.translate == 'yes'
+        with:
+          python-version: '3.12'
+      - name: Install local translation runtime for single-language findings
+        if: steps.prepare.outputs.translate == 'yes'
+        run: python3 -m pip install --disable-pip-version-check ctranslate2==4.6.0 sentencepiece==0.2.1
+      - name: Format findings and verification in both languages
+        if: steps.prepare.outputs.needed == 'yes'
+        run: python3 ci/scripts/codex_review_summary.py render
+      - name: Publish the summary to the PR
+        if: steps.prepare.outputs.needed == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 ci/scripts/codex_review_summary.py publish

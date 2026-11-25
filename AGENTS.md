@@ -1,7 +1,9 @@
 # waveshare_boards
 
+[简体中文](AGENTS_ZH.md)
+
 ## Code Review Rules
 
-- 审查硬件配置变更时，将受影响的引脚、时钟、总线地址、有效电平和坐标方向与同型号、同硬件版本的原理图或官方示例交叉核对。若 YAML 省略了会影响行为的字段，追到该版本驱动的实际默认值。引用具体文件行，并说明差异会影响哪个设备、在什么条件下出现。
-- 审查初始化、配置更新和读回校验时，分别追踪首次启动与复用已有配置的路径。检查“已匹配，可以跳过”的条件是否覆盖本次需要保证的行为。能用一个寄存器值、一组输入或一个小测试验证时，给出输入、期望结果、实际结果，并说明是否在实物上验证过。
-- 提供审查总结时，用中文给出合并建议和依据。查看与改动相关的 CI 作业及其日志，留意新增配置是否被忽略。说明哪些构建通过、哪些行为有实机证据。若没有发现可复现的问题，列出实际检查过的路径；若需补测，写明操作和通过条件。
+- Cross-check changed pins, clocks, bus addresses, active levels, and coordinate orientation against the schematic or official example for the same model and hardware revision. For an omitted YAML field that affects behavior, follow the default in the relevant driver version. Cite the lines and explain which device is affected and under what conditions.
+- Trace first initialization, reuse of existing configuration, and verification after a write. Check that any condition for skipping an update covers the behavior the change requires. Where possible, give one register value, input, or small test with its expected and observed results. Identify whether it ran on hardware.
+- Write each finding and the merge recommendation in both languages. Use separate paragraphs labeled `中文：` and `English:`, each covering the trigger, impact, evidence, and suggested change. Preserve code identifiers and evidence links. Check relevant CI jobs and logs for ignored settings. Distinguish successful builds from recorded hardware tests. If you find no reproducible issue, list the paths you actually checked. For any needed follow-up test, give the procedure and pass condition.
