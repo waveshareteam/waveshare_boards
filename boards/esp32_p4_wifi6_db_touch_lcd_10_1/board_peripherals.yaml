@@ -1,0 +1,172 @@
+version: 1.0.0
+
+peripherals:
+  # RS-232 UART. No hardware flow-control pins are assigned.
+  - name: uart_232
+    type: uart
+    role: io
+    init_skip: true
+    config:
+      uart_num: 2
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+      tx_io_num: 28
+      rx_io_num: 29
+      rts_io_num: -1
+      cts_io_num: -1
+      uart_mode: UART_MODE_UART
+
+  # RS-485 half-duplex UART. RTS drives the external transceiver DE/RE pin.
+  - name: uart_485
+    type: uart
+    role: io
+    init_skip: true
+    config:
+      uart_num: 1
+      uart_config:
+        baud_rate: 115200
+        data_bits: UART_DATA_8_BITS
+        parity: UART_PARITY_DISABLE
+        stop_bits: UART_STOP_BITS_1
+        flow_ctrl: UART_HW_FLOWCTRL_DISABLE
+      tx_io_num: 27
+      rx_io_num: 26
+      rts_io_num: 34
+      cts_io_num: -1
+      uart_mode: UART_MODE_RS485_HALF_DUPLEX
+
+  # Full-duplex I2S bus used by the ES8389 codec.
+  - name: i2s_audio_out
+    type: i2s
+    format: "std-out"
+    role: master
+    config: &i2s_config
+      port: 0
+      sample_rate_hz: 48000
+      clk_src: "I2S_CLK_SRC_DEFAULT"
+      mclk_multiple: 256
+      data_bit_width: 16
+      slot_mode: "I2S_SLOT_MODE_STEREO"
+      slot_mask: "I2S_STD_SLOT_BOTH"
+      ws_width: 16
+      pins:
+        mclk: 13
+        bclk: 12
+        ws: 10
+        dout: 9
+        din: 11
+
+  # RX shares I2S0 with TX, so the ESP must stay I2S master here: it drives
+  # BCLK/WS/MCLK and the ES8389 is the slave (is_master: false). With
+  # `role: slave` nothing generates the clocks and i2s_channel_read() times out.
+  - name: i2s_audio_in
+    type: i2s
+    format: "std-in"
+    role: master
+    config: *i2s_config
+
+  - name: gpio_pa_control
+    type: gpio
+    role: io
+    config:
+      pin: 53
+      mode: GPIO_MODE_OUTPUT
+      pull_up: true
+      default_level: 0
+
+  # Shared I2C bus for the ES8389 codec, GT911 touch, and CSI camera control.
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 1
+      pins:
+        sda: 7
+        scl: 8
+
+  # SD card power switch, active low.
+  - name: gpio_sd_power
+    type: gpio
+    role: io
+    config:
+      pin: 45
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      default_level: 0
+
+  # MIPI DSI PHY supply shared by the display and CSI camera.
+  - name: ldo_mipi
+    type: ldo
+    config:
+      chan_id: 3
+      voltage_mv: 2500
+      adjustable: 1
+      owned_by_hw: 0
+
+  # Display backlight PWM.
+  - name: ledc_backlight
+    type: ledc
+    role: none
+    config:
+      gpio_num: 30
+      freq_hz: 5000
+      duty: 0
+      duty_resolution: LEDC_TIMER_10_BIT
+      # output_invert: true
+
+  # MIPI-DSI bus for the JD9365 display.
+  - name: dsi_display
+    type: dsi
+    config:
+      bus_id: 0
+      data_lanes: 2
+      phy_clk_src: 0
+      lane_bit_rate_mbps: 1500
+
+  # BOOT button (Key2), active low.
+  - name: gpio_boot_button
+    type: gpio
+    role: io
+    init_skip: true
+    config:
+      pin: 35
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      default_level: 0
+
+  # PCF85063ATL RTC interrupt output, active low.
+  - name: gpio_rtc_int
+    type: gpio
+    role: io
+    init_skip: true
+    config:
+      pin: 20
+      mode: GPIO_MODE_INPUT
+      pull_up: true
+      intr_type: GPIO_INTR_NEGEDGE
+      default_level: 0
+
+  # TWAI/CAN transceiver (TJA1051T/3/1J) TX/RX pins.
+  - name: gpio_can_tx
+    type: gpio
+    role: io
+    init_skip: true
+    config:
+      pin: 22
+      mode: GPIO_MODE_OUTPUT
+      pull_up: false
+      default_level: 1
+
+  - name: gpio_can_rx
+    type: gpio
+    role: io
+    init_skip: true
+    config:
+      pin: 21
+      mode: GPIO_MODE_INPUT
+      pull_up: false
+      default_level: 0

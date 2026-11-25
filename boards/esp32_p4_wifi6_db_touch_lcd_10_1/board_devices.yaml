@@ -1,0 +1,228 @@
+version: 1.0.0
+
+devices:
+  # ES8389 is a single full-duplex codec. codec_dev 2.0 models it as two
+  # single-direction logical devices sharing the same I2C control interface.
+  - name: audio_dac
+    chip: es8389
+    type: audio_codec
+    config:
+      adc_enabled: false
+      dac_enabled: true
+      sys_cfg:
+        is_master: false
+        no_mclk: true
+    peripherals:
+      - pa_name: gpio_pa_control
+        gain: 6
+        active_level: 1
+      - i2s_name: i2s_audio_out
+      - &es8389_i2c_master
+        i2c_name: i2c_master
+        address: 0x20
+        frequency: 400000
+
+  - name: audio_adc
+    chip: es8389
+    type: audio_codec
+    config:
+      adc_enabled: true
+      dac_enabled: false
+      sys_cfg:
+        is_master: false
+        no_mclk: true
+      adc_cfg:
+        # codec_dev 2.0 label order is LSB to MSB: MIC1 (left), MIC2 (right).
+        label: [FL, FR]
+    peripherals:
+      - i2s_name: i2s_audio_in
+      - *es8389_i2c_master
+
+  - name: display_lcd
+    chip: jd9365
+    type: display_lcd
+    sub_type: dsi
+    version: default
+    dependencies:
+      waveshare/esp_lcd_jd9365_10_1: ^2.0.0
+    config:
+      reset_gpio_num: 31
+      rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+      bits_per_pixel: 16
+      reset_active_high: 0
+      dbi_config:
+        virtual_channel: 0
+        lcd_cmd_bits: 8
+        lcd_param_bits: 8
+      dpi_config:
+        virtual_channel: 0
+        dpi_clk_src: MIPI_DSI_DPI_CLK_SRC_DEFAULT
+        dpi_clock_freq_mhz: 80
+        in_color_format: LCD_COLOR_FMT_RGB565
+        out_color_format: LCD_COLOR_FMT_RGB565
+        num_fbs: 3
+        flags:
+          use_dma2d: false
+          disable_lp: false
+        video_timing:
+          h_size: 800
+          v_size: 1280
+          hsync_back_porch: 20
+          hsync_pulse_width: 20
+          hsync_front_porch: 40
+          vsync_back_porch: 10
+          vsync_pulse_width: 4
+          vsync_front_porch: 30
+    peripherals:
+      - name: i2c_master
+      - ldo_name: ldo_mipi
+      - dsi_name: dsi_display
+
+  - name: lcd_brightness
+    type: ledc_ctrl
+    version: 1.0.0
+    config:
+      default_percent: 100
+    peripherals:
+      - ledc_name: ledc_backlight
+
+  - name: lcd_touch
+    chip: gt911
+    type: lcd_touch
+    sub_type: i2c
+    version: default
+    dependencies:
+      espressif/esp_lcd_touch_gt911: ^1.2.0~2
+    config:
+      io_i2c_config:
+        lcd_cmd_bits: 16
+        scl_speed_hz: 400000
+      touch_config:
+        x_max: 800
+        y_max: 1280
+        rst_gpio_num: 23
+        int_gpio_num: 52
+        levels:
+          reset: 0
+          interrupt: 0
+        flags:
+          swap_xy: false
+          mirror_x: false
+          mirror_y: false
+    peripherals:
+      - i2c_name: i2c_master
+        # GT911 addresses are 8-bit values corresponding to 7-bit 0x5D/0x14.
+        i2c_addr: [0xBA, 0x28]
+
+  - name: camera
+    type: camera
+    sub_type: csi
+    version: default
+    config:
+      csi_config:
+        reset_io: -1
+        pwdn_io: -1
+        dont_init_ldo: true
+        xclk_config:
+          xclk_pin: -1
+          xclk_freq_hz: 20000000
+    peripherals:
+      - i2c_name: i2c_master
+      - ldo_name: ldo_mipi
+
+  - name: fs_sdcard
+    type: fs_fat
+    sub_type: sdmmc
+    version: default
+    power_ctrl_device: sdcard_power_ctrl
+    config:
+      mount_point: "/sdcard"
+      vfs_config:
+        format_if_mount_failed: false
+        max_files: 5
+        allocation_unit_size: 16384
+      sub_config:
+        slot: SDMMC_HOST_SLOT_0
+        frequency: SDMMC_FREQ_HIGHSPEED
+        bus_width: 4
+        slot_flags: 0
+        pins:
+          clk: 43
+          cmd: 44
+          d0: 39
+          d1: 40
+          d2: 41
+          d3: 42
+          d4: -1
+          d5: -1
+          d6: -1
+          d7: -1
+          cd: -1
+          wp: -1
+        ldo_chan_id: 4
+
+  # Internal-flash SPIFFS. The label must be explicit: NULL selects the first
+  # SPIFFS partition, which in the Brookesia table is the ESP-SR "model" image.
+  - name: fs_spiffs
+    type: fs_spiffs
+    version: default
+    config:
+      base_path: "/spiffs"
+      partition_label: "storage"
+      max_files: 5
+      format_if_mount_failed: false
+
+  - name: sdcard_power_ctrl
+    type: power_ctrl
+    sub_type: gpio
+    peripherals:
+      - gpio_name: gpio_sd_power
+        active_level: 0
+
+  # BOOT button (Key2) on GPIO35, active low.
+  - name: boot_button
+    type: button
+    sub_type: gpio
+    version: default
+    init_skip: true
+    dependencies:
+      espressif/button: "^4.2.3"
+    config:
+      active_level: 0
+      enable_power_save: false
+      disable_pull: false
+      long_press_time: 2000
+      short_press_time: 100
+    peripherals:
+      - gpio_name: gpio_boot_button
+
+  # PCF85063ATL RTC on the shared I2C bus. esp_board_manager 0.7.6 has no
+  # built-in RTC device type, so expose its board parameters via custom.
+  - name: rtc
+    type: custom
+    chip: pcf85063a
+    version: default
+    init_skip: true
+    dependencies:
+      waveshare/pcf85063a: "^2.1.0"
+    config:
+      i2c_addr: 0x51
+      int_gpio_num: 20
+    peripherals:
+      - name: i2c_master
+      - name: gpio_rtc_int
+
+  # TWAI/CAN interface via TJA1051T/3/1J transceiver. esp_board_manager 0.7.6
+  # has no built-in TWAI peripheral/device type, so expose its pins via custom.
+  - name: can
+    type: custom
+    chip: tja1051
+    version: default
+    init_skip: true
+    config:
+      tx_io_num: 22
+      rx_io_num: 21
+      bitrate: 250000
+    peripherals:
+      - name: gpio_can_tx
+      - name: gpio_can_rx
