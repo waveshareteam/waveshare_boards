@@ -63,6 +63,10 @@ def identify(repo, event):
     if review:
         output("pr", number)
         output("receipt", review["key"])
+        if review["key"].startswith("summary:"):
+            # Preserve the verified snapshot even if another push edits the comment
+            # while the publishing job is queued.
+            output("clean_snapshot", json.dumps(review, separators=(",", ":")))
 
 
 def prepare(repo, number, key, folder):
@@ -70,7 +74,13 @@ def prepare(repo, number, key, folder):
     if pages and all(total == len(pages) for _, total in pages.values()) and set(pages) == set(range(1, len(pages) + 1)):
         print(f"Summary already published for {key}.")
         return
-    review = load_report_input(repo, number, {}, key)
+    snapshot = os.environ.get("CLEAN_SNAPSHOT")
+    if snapshot:
+        review = json.loads(snapshot)
+        if review["key"] != key or review["has_findings"] is not False:
+            raise ValueError("Clean review snapshot does not match the identified round")
+    else:
+        review = load_report_input(repo, number, {}, key)
     results = list(review["findings"])
     if review["review_note"]:
         results.append({"body": review["review_note"], "url": review["url"]})
@@ -107,8 +117,11 @@ def render(repo, review):
     zh, en = merge_advice(review)
     receipt_url = review["url"]
     sha = review["sha"]
+    source_label = "原始审查 / Original review"
+    if review.get("key", "").startswith("summary:"):
+        source_label = "机器人滚动摘要 / Bot status (updates in place)"
     lines = ["### Codex 审查总评 / Review summary",
-             f"[`{sha[:10]}`](https://github.com/{repo}/commit/{sha}) · [原始审查 / Original review]({receipt_url})",
+             f"[`{sha[:10]}`](https://github.com/{repo}/commit/{sha}) · [{source_label}]({receipt_url})",
              f"**合并建议 / Merge recommendation**\n\n{zh}\n\n{en}",
              "#### 发现与依据 / Findings and evidence"]
     translated = False

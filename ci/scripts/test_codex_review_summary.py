@@ -1,7 +1,10 @@
 """Offline regression tests for the two GitHub Codex review result formats."""
 
 import json
+import os
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import codex_review_scope as scope
@@ -23,6 +26,16 @@ def receipt_comment():
 
 def event(comment):
     return {"issue": {"number": 1, "pull_request": {}}, "sender": {"login": source.BOT}, "comment": comment}
+
+
+def push_summary(ended="2026-01-01T01:30:02.895212Z", status="completed", security_status=None):
+    code = {"status": status, "commit_sha": SHA, "has_any_findings": False, "has_unresolved_findings": False}
+    state = {"code_review": code, "security_review": {"status": security_status}}
+    body = (source.SUMMARY + "\n<!-- codex-review-state:v1 " + json.dumps(state) + " -->\n"
+            f'| 📝 **Code Review** | ✅ **{status.title()}** <relative-time datetime="{ended}">{ended}</relative-time>'
+            f' | `{SHA[:7]}` | New commits |')
+    return dict(receipt_comment(), id=10, html_url="https://github.com/sample/boards/pull/1#issuecomment-10",
+                issue_url="https://api.github.com/repos/sample/boards/issues/1", body=body, updated_at=ended)
 
 
 class ReviewSummaryTests(unittest.TestCase):
@@ -58,6 +71,50 @@ class ReviewSummaryTests(unittest.TestCase):
                 account = webhook["sender"] if actor == "sender" else webhook["comment"]["user"]
                 account["login"] = "contributor"
                 self.assertIsNone(source.load_report_input(REPO, 1, webhook, None))
+
+    def test_clean_push_summary_without_separate_receipt_identifies_each_round(self):
+        first = push_summary()
+        second = push_summary(ended="2026-01-01T02:30:02.895212Z")
+        with patch.object(source, "get_pages", return_value=[]), patch("time.sleep"):
+            def read(comment):
+                return source.load_report_input(REPO, 1, event(comment), None)
+
+            review = read(first)
+            self.assertTrue(review["key"].startswith("summary:"))
+            self.assertEqual((SHA, first["html_url"], False), (review["sha"], review["url"], review["has_findings"]))
+            self.assertEqual(review["key"], read(first)["key"])
+            self.assertNotEqual(review["key"], read(second)["key"])
+
+    def test_security_edit_and_incomplete_push_do_not_republish_code_review(self):
+        webhook = event(push_summary(security_status="completed"))
+        webhook["changes"] = {"body": {"from": push_summary(security_status="running")["body"]}}
+        for payload in [webhook, event(push_summary(status="running")), event(push_summary(status="failed"))]:
+            with self.subTest(body=payload["comment"]["body"]):
+                self.assertIsNone(source.load_report_input(REPO, 1, payload, None))
+
+    def test_latest_replay_selects_newer_clean_push_summary_over_old_receipt(self):
+        latest = push_summary()
+        comments = [receipt_comment(), latest]
+
+        def records(path, **kwargs):
+            return comments if "/issues/1/comments" in path else []
+
+        with patch.object(source, "get_pages", side_effect=records), patch("time.sleep"):
+            replay = source.load_report_input(REPO, 1, {}, None)
+            automatic = source.load_report_input(REPO, 1, event(latest), None)
+        self.assertEqual((latest["html_url"], SHA, automatic["key"]), (replay["url"], replay["sha"], replay["key"]))
+
+    def test_prepare_uses_verified_snapshot_if_the_status_comment_has_moved(self):
+        review = source.clean_summary(push_summary())
+        with TemporaryDirectory() as directory, patch.dict(os.environ, CLEAN_SNAPSHOT=json.dumps(review)), \
+             patch.object(summary, "existing_pages", return_value={}), patch.object(summary, "output"), \
+             patch.object(summary, "scope_lines", return_value=([], "passed")) as checks, \
+             patch.object(summary, "load_report_input") as refetch:
+            summary.prepare(REPO, 1, review["key"], Path(directory))
+            prepared = json.loads((Path(directory) / "input.json").read_text())
+        refetch.assert_not_called()
+        checks.assert_called_once_with(REPO, 1, SHA)
+        self.assertEqual((review["key"], SHA), (prepared["key"], prepared["sha"]))
 
     def test_translate_only_missing_language_and_keep_both_sources(self):
         mono = summary.findings_text({"body": "[P2] 缺少电源配置", "url": "https://example.org/finding-1"})

@@ -74,6 +74,29 @@ def list_receipts(prefix, number, kind):
     return [item for record in records if (item := receipt(kind, record)) is not None]
 
 
+def clean_summary(entry):
+    """Automatic clean reviews can update only the bot's rolling status comment."""
+    if entry["user"]["login"] != BOT:
+        return None
+    state = code_state(entry.get("body") or "")
+    if not state or state[0] != "completed" or state[3] is not False:
+        return None
+    _, end, sha, _ = state
+    if not re.fullmatch(r"[0-9a-f]{40}", sha):
+        return None
+    return {
+        "key": f"summary:{entry['id']}:{sha}:{end.strftime('%Y%m%dT%H%M%S%f')}",
+        "sha": sha, "url": entry["html_url"], "completed_at": end.isoformat(),
+        "has_findings": False, "findings": [], "review_note": "",
+    }
+
+
+def latest_matching(items, sha, start, end):
+    matches = (item for item in items if sha.startswith(item["sha"])
+               and start <= timestamp(item["completed_at"]) <= end)
+    return max(matches, key=lambda item: timestamp(item["completed_at"]), default=None)
+
+
 def select_manual(repo, number, selector):
     prefix = f"repos/{repo}"
     if selector:
@@ -89,7 +112,16 @@ def select_manual(repo, number, selector):
                 raise ValueError("Receipt belongs to a different pull request")
         selected = receipt(kind, entry)
     else:
-        items = list_receipts(prefix, number, "review") + list_receipts(prefix, number, "comment")
+        comments = get_pages(f"{prefix}/issues/{number}/comments?per_page=100")
+        standalone = [item for c in comments if (item := receipt("comment", c))]
+        items = list_receipts(prefix, number, "review") + standalone
+        for comment in comments:
+            summary = clean_summary(comment)
+            if summary:
+                end = timestamp(summary["completed_at"])
+                # Keep a manual clean review's original comment ID when both exist.
+                item = latest_matching(standalone, summary["sha"], end - timedelta(minutes=2), end)
+                items.append(item or summary)
         selected = max(items, key=lambda item: timestamp(item["completed_at"]), default=None)
     if selected is None:
         raise ValueError("No supported Codex code review receipt found")
@@ -122,10 +154,13 @@ def select_event(prefix, number, event):
         if delay:
             time.sleep(delay)
         items = list_receipts(prefix, number, "review" if found else "comment")
-        matches = [item for item in items if sha.startswith(item["sha"])
-                   and start <= timestamp(item["completed_at"]) <= end]
-        if matches:
-            return max(matches, key=lambda item: timestamp(item["completed_at"]))
+        match = latest_matching(items, sha, start, end)
+        if match:
+            return match
+    if not found:
+        summary = clean_summary(comment)
+        if summary:
+            return summary
     raise RuntimeError("Completed Codex review has no matching receipt yet")
 
 

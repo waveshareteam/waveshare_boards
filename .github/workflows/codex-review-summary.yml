@@ -38,6 +38,7 @@ jobs:
     outputs:
       pr: ${{ steps.receipt.outputs.pr }}
       receipt: ${{ steps.receipt.outputs.receipt }}
+      clean_snapshot: ${{ steps.receipt.outputs.clean_snapshot }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,6 +76,7 @@ jobs:
       - id: prepare
         env:
           GH_TOKEN: ${{ github.token }}
+          CLEAN_SNAPSHOT: ${{ needs.identify.outputs.clean_snapshot }}
         run: python3 ci/scripts/codex_review_summary.py prepare
       - uses: actions/setup-python@v5
         if: steps.prepare.outputs.translate == 'yes'
