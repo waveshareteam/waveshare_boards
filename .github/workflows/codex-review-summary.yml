@@ -62,8 +62,8 @@ jobs:
     permissions:
       contents: read
       checks: read
-      pull-requests: read
-      issues: write
+      pull-requests: write
+      issues: read
     env:
       PR_NUMBER: ${{ needs.identify.outputs.pr }}
       RECEIPT_KEY: ${{ needs.identify.outputs.receipt }}
