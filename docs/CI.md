@@ -63,8 +63,10 @@ PR. `Board pack checks` is the stable aggregate status suitable for branch prote
 | Root or nested Markdown, documentation images | None |
 | Issue forms, license, ignore rules | None |
 | Files inside one board directory | That board |
-| CI scripts, tests, workflows, public headers, root manifest or CMake | All boards |
-| Deleted or renamed board paths | Both sides are considered; removed paths can select all remaining boards |
+| Shared headers | Boards that include the header directly or transitively. Unattributed or global inputs select all boards |
+| Pack version only | No additional boards |
+| CI scripts, tests, workflows, other root manifest changes or CMake | All boards |
+| Deleted or renamed paths | Use consumers from both sides of the diff and build the affected boards that still exist |
 | Firmware documentation, source, binary, archive | Reported separately; no board build |
 | Unrecognized non-documentation input | All boards; path reported for review |
 | Empty or unavailable Git diff | Error; no silent fallback |
