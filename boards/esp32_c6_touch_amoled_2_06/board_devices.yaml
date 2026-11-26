@@ -1,0 +1,46 @@
+devices:
+  - name: display_lcd
+    chip: co5300
+    type: display_lcd
+    sub_type: spi
+    version: default
+    dependencies:
+      waveshare/esp_lcd_sh8601: "^2"
+    config:
+      x_max: 410
+      y_max: 502
+      need_reset: true
+      io_spi_config:
+        cs_gpio_num: 5
+        pclk_hz: 40000000
+        trans_queue_depth: 10
+        lcd_cmd_bits: 32
+        flags:
+          quad_mode: true
+      lcd_panel_config:
+        reset_gpio_num: 11
+        bits_per_pixel: 16
+        rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+    peripherals:
+      - spi_name: spi_display
+
+  - name: lcd_touch
+    chip: ft6146_cst820b
+    type: lcd_touch
+    sub_type: i2c
+    version: default
+    dependencies:
+      espressif/esp_lcd_touch_ft5x06: "^1"
+      espressif/esp_lcd_touch_cst816s: "^1.1.2"
+    config:
+      io_i2c_config:
+        lcd_cmd_bits: 8
+        scl_speed_hz: 400000
+      touch_config:
+        x_max: 410
+        y_max: 502
+        rst_gpio_num: 10
+        int_gpio_num: 15
+    peripherals:
+      - i2c_name: i2c_master
+        i2c_addr: [0x2A, 0x70]  # Board Manager uses left-shifted addresses.

@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
 import json
 import os
 from pathlib import Path, PurePosixPath
+import posixpath
 import re
 import subprocess
 import sys
@@ -68,7 +70,90 @@ def changed_paths(root, base, head="HEAD"):
     return paths
 
 
-def route(boards, paths):
+HEADER_SUFFIXES = {".h", ".hh", ".hpp", ".hxx", ".inc", ".inl"}
+
+
+def tracked_files(root, revision):
+    output = subprocess.check_output(["git", "ls-tree", "-rz", "--name-only", revision], cwd=root)
+    return set(output.decode().split("\0")[:-1])
+
+
+def include_users(root, revision, files):
+    """Reverse literal includes at one revision, using the source and pack include directories."""
+    sources = ["*." + ext for ext in ("c", "cc", "cpp", "cxx", "S")] + ["*" + ext for ext in HEADER_SUFFIXES]
+    result = subprocess.run(["git", "grep", "-zI", "-E", "-e", r"^[[:space:]]*#[[:space:]]*include",
+                             "-e", r"__has_include[[:space:]]*\(",
+                             revision, "--", *sources], cwd=root, capture_output=True)
+    if result.returncode not in (0, 1):  # git grep returns 1 for no matches.
+        result.check_returncode()
+    users = defaultdict(set)
+    dynamic = set()
+    for line in result.stdout.decode(errors="surrogateescape").splitlines():
+        location, directive = line.split("\0", 1)
+        source = location.split(":", 1)[1]
+        for match in re.finditer(r'(?:^\s*#\s*include\b|\b__has_include\s*\()\s*(?:[<"]([^">]+)[">])?', directive):
+            header = match[1]
+            if header is None:
+                dynamic.add(source)
+                continue
+            for directory in (posixpath.dirname(source), "include", ""):
+                candidate = posixpath.normpath(posixpath.join(directory, header))
+                if candidate in files:
+                    users[candidate].add(source)
+    return users, dynamic
+
+
+def git_route(root, boards, base, head):
+    ancestor = subprocess.check_output(["git", "merge-base", base, head], cwd=root, text=True).strip()
+    paths = changed_paths(root, ancestor, head)
+    all_boards = {b["board"] for b in boards}
+    scopes = defaultdict(set)
+    manifests = []
+    for revision in (ancestor, head):
+        files = tracked_files(root, revision)
+        if "idf_component.yml" in paths and "idf_component.yml" in files:
+            content = subprocess.check_output(["git", "show", f"{revision}:idf_component.yml"], cwd=root)
+            manifest = yaml.safe_load(content)
+            if isinstance(manifest, dict) and "version" in manifest:
+                manifests.append({k: v for k, v in manifest.items() if k != "version"})
+
+        directories = {p.parent.as_posix(): p.parent.name for filename in files
+                       if (p := PurePosixPath(filename)).name == "board_info.yaml"
+                       and 1 <= len(p.parent.parts) <= 2
+                       and not any(part in EXCLUDED or part.startswith(".") for part in p.parent.parts)}
+
+        def owner(path):
+            return next((name for directory, name in directories.items() if path.startswith(directory + "/")), None)
+
+        headers = {p for p in paths if p in files and PurePosixPath(p).suffix in HEADER_SUFFIXES
+                   and (p.startswith("include/") or owner(p))}
+        users, dynamic = include_users(root, revision, files) if headers else ({}, set())
+        for path in set(paths) & files:
+            if board := owner(path):
+                scopes[path].add(board)
+            if path not in headers:
+                continue
+            # Macro includes cannot be resolved statically. Include their consumers conservatively.
+            pending = set(users.get(path, ())) | dynamic
+            seen = set()
+            while pending:
+                source = pending.pop()
+                if source in seen:
+                    continue
+                seen.add(source)
+                if board := owner(source):
+                    scopes[path].add(board)
+                elif not source.startswith("include/"):
+                    scopes[path].update(all_boards)
+                pending.update(users.get(source, ()))
+
+    if len(manifests) == 2 and manifests[0] == manifests[1]:
+        scopes["idf_component.yml"] = set()
+    # Unattributed shared inputs retain the full-build fallback in route().
+    return route(boards, paths, scopes)
+
+
+def route(boards, paths, scopes=None):
     if not paths:
         raise ValueError("a complete nonempty changed-file scope is required")
     selected, firmware, unknown = set(), [], []
@@ -88,6 +173,9 @@ def route(boards, paths):
             firmware.append({"path": value, "kind": kind})
             continue
         if doc or value in {"LICENSE", ".gitignore"} or value.startswith(".github/ISSUE_TEMPLATE/"):
+            continue
+        if scopes is not None and value in scopes:
+            selected.update(scopes[value])
             continue
         direct = [b["board"] for b in boards if value.startswith(b["path"] + "/")]
         if direct:
@@ -160,7 +248,7 @@ def main():
             print(json.dumps(boards, indent=2))
             return 0
         routed = ({"boards": boards, "docs_only": False, "firmware": [], "unknown": []}
-                  if args.all else route(boards, changed_paths(args.root, args.base, args.head)))
+                  if args.all else git_route(args.root, boards, args.base, args.head))
         versions = (args.bmgr or registry_versions(args.root)) if routed["boards"] else []
         if any(not STABLE.fullmatch(v) for v in versions):
             raise ValueError("matrix versions must be exact stable releases")

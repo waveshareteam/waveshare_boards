@@ -1,0 +1,22 @@
+peripherals:
+  - name: i2c_master
+    type: i2c
+    role: master
+    config:
+      port: 1
+      pins:
+        sda: 15
+        scl: 14
+
+  - name: spi_display
+    type: spi
+    role: master
+    config:
+      spi_bus_config:
+        spi_port: SPI2_HOST
+        sclk_io_num: 11
+        mosi_io_num: 4
+        miso_io_num: 5
+        quadwp_io_num: 6
+        quadhd_io_num: 7
+        max_transfer_sz: 411640  # 410 x 502 RGB565 pixels

@@ -55,6 +55,11 @@ class BoardPackTests(unittest.TestCase):
         values = dict(line.split('=', 1) for line in output.read_text().splitlines()) if output.exists() else {}
         return result, values
 
+    def matrix_boards(self, base):
+        result, values = self.cli('matrix', '--base', base, '--bmgr', '0.7.5')
+        self.assertEqual(0, result.returncode, result.stderr)
+        return {cell['board'] for cell in json.loads(values['matrix'])['include']}
+
     def test_discovery_excludes_generated_and_upstream(self):
         for root in ('ci', 'managed_components', 'components', 'firmware', 'libraries', '.hidden'):
             self.add_board(f'{root}/ignored')
@@ -97,6 +102,49 @@ class BoardPackTests(unittest.TestCase):
         routed = bp.route(bp.discover(self.root), ['boards/gamma/components/custom/CHANGELOG.md'])
         self.assertTrue(routed['docs_only'])
         self.assertEqual([], routed['boards'])
+
+    def test_pack_version_change_preserves_board_scope(self):
+        manifest = 'version: "0.3.6"\n' + (self.root / 'idf_component.yml').read_text()
+        self.write('idf_component.yml', manifest)
+        base = self.initialize_git()
+        self.write('idf_component.yml', manifest.replace('0.3.6', '0.3.7'))
+        self.git('commit', '-qam', 'Bump pack version')
+        self.assertEqual(set(), self.matrix_boards(base))
+
+        self.write('alpha/board_devices.yaml', 'devices: []  # board revision\n')
+        self.git('commit', '-qam', 'Change alpha')
+        self.assertEqual({'alpha'}, self.matrix_boards(base))
+
+        self.write('idf_component.yml', manifest.replace('>=0.7.5', '>=0.7.6'))
+        self.git('commit', '-qam', 'Change dependency')
+        self.assertEqual({'alpha', 'beta'}, self.matrix_boards(base))
+
+    def test_shared_header_selects_direct_and_transitive_consumers(self):
+        self.add_board('boards/gamma')
+        self.write('alpha/setup_device.c', '#include "../include/panel.h"\n')
+        self.write('display/beta/setup_device.c', '#include "../../include/wrapper.h"\n')
+        self.write('include/wrapper.h', '#include "panel.h"\n')
+        self.write('include/panel.h', '#define HEIGHT 480\n')
+        base = self.initialize_git()
+        self.write('include/panel.h', '#define HEIGHT 502\n')
+        self.git('commit', '-qam', 'Change shared panel')
+        self.assertEqual({'alpha', 'beta'}, self.matrix_boards(base))
+
+    def test_removed_and_renamed_headers_route_old_and_new_consumers(self):
+        self.add_board('boards/gamma')
+        for directory, path in [('alpha', '../include/old.h'), ('display/beta', '../../include/new.h')]:
+            self.write(f'{directory}/setup_device.c',
+                       f'#if __has_include("{path}")\n#include "{path}"\n#endif\n')
+        self.write('include/old.h', '#define PRESENT 1\n')
+        base = self.initialize_git()
+        self.git('rm', 'include/old.h')
+        self.git('commit', '-qm', 'Remove optional header')
+        self.assertEqual({'alpha'}, self.matrix_boards(base))
+
+        self.write('include/new.h', '#define PRESENT 1\n')
+        self.git('add', 'include/new.h')
+        self.git('commit', '-qm', 'Provide header at the new path')
+        self.assertEqual({'alpha', 'beta'}, self.matrix_boards(base))
 
     def test_docs_beside_source_select_zero(self):
         for path in ('README.md', 'alpha/README.md', 'ci/test_app/README.md',
@@ -159,6 +207,22 @@ class BoardPackTests(unittest.TestCase):
         self.git('commit', '-qm', 'Remove fixture')
         remaining = bp.discover(self.root)
         self.assertEqual(remaining, bp.route(remaining, bp.changed_paths(self.root, old))['boards'])
+
+    def test_renamed_board_and_former_consumer_are_selected(self):
+        self.add_board('boards/gamma')
+        self.write('alpha/pin.h', '#define PIN 9\n')
+        self.write('display/beta/setup_device.c',
+                   '#if __has_include("../../alpha/pin.h")\nint pin_available = 1;\n#endif\n')
+        base = self.initialize_git()
+        self.git('mv', 'alpha', 'boards/delta')
+        self.add_board('boards/delta')
+        self.git('commit', '-qam', 'Rename alpha to delta')
+        self.assertEqual({'beta', 'delta'}, self.matrix_boards(base))
+
+        renamed = self.git('rev-parse', 'HEAD')
+        self.git('rm', '-r', 'boards/delta')
+        self.git('commit', '-qm', 'Remove unused board')
+        self.assertEqual(set(), self.matrix_boards(renamed))
 
     def test_registry_exact_stable_endpoints(self):
         from idf_component_tools.utils import ComponentVersion

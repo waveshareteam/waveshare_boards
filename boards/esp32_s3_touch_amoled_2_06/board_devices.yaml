@@ -1,0 +1,60 @@
+devices:
+  - name: display_lcd
+    type: display_lcd
+    sub_type: spi
+    chip: co5300
+    version: default
+    dependencies:
+      waveshare/esp_lcd_sh8601: "^2"
+    config:
+      x_max: 410
+      y_max: 502
+      frame_format: RGB565_BE
+      need_reset: true
+      io_spi_config:
+        cs_gpio_num: 12
+        dc_gpio_num: -1
+        pclk_hz: 40000000
+        spi_mode: 0
+        trans_queue_depth: 10
+        lcd_cmd_bits: 32
+        lcd_param_bits: 8
+        flags:
+          quad_mode: true
+      lcd_panel_config:
+        reset_gpio_num: 8
+        rgb_ele_order: LCD_RGB_ELEMENT_ORDER_RGB
+        data_endian: LCD_RGB_DATA_ENDIAN_BIG
+        bits_per_pixel: 16
+    peripherals:
+      - spi_name: spi_display
+
+  - name: lcd_touch
+    type: lcd_touch
+    sub_type: i2c
+    chip: ft6146_cst820b
+    version: default
+    dependencies:
+      espressif/esp_lcd_touch_ft5x06: "^1"
+      espressif/esp_lcd_touch_cst816s: "^1.1.2"
+    config:
+      io_i2c_config:
+        lcd_cmd_bits: 8
+        scl_speed_hz: 400000
+        flags:
+          disable_control_phase: true
+      touch_config:
+        x_max: 410
+        y_max: 502
+        rst_gpio_num: 9
+        int_gpio_num: 38
+        levels:
+          reset: 0
+          interrupt: 0
+        flags:
+          swap_xy: false
+          mirror_x: false
+          mirror_y: false
+    peripherals:
+      - i2c_name: i2c_master
+        i2c_addr: [0x2A, 0x70]  # Board Manager stores shifted I2C addresses
