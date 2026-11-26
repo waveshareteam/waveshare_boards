@@ -1,0 +1,5 @@
+board: esp32_c6_touch_amoled_2_06
+chip: esp32c6
+version: 1.0.0
+description: "ESP32-C6-Touch-AMOLED-2.06 with SH8601 display and FT6146 or CST820B touch"
+manufacturer: "Waveshare"
